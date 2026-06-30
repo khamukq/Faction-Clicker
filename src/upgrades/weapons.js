@@ -212,11 +212,11 @@ for (const wp of WEAPONS) {
     const t = wp.tier;
     wp.eraIndex = Math.floor((t - 1) / 10);
     wp.era = ERA_NAMES[wp.eraIndex] || '';
-    wp.baseDamage = +(1 + (t - 1) * 0.35).toFixed(2);
-    wp.damagePerLevel = +(0.3 + (t - 1) * 0.02).toFixed(3);
-    wp.baseCost = +(5 + (t - 1) * 2.5).toFixed(1);
-    wp.costGrowth = 1.07;
-    wp.unlockCost = t === 1 ? 0 : Math.floor(10 * Math.pow(t - 1, 1.3));
+    wp.baseDamage = Math.floor(2 + Math.pow(t, 1.7) / 8);
+    wp.damagePerLevel = +(wp.baseDamage * 0.12).toFixed(3);
+    wp.baseCost = Math.floor(10 + t * t / 4);
+    wp.costGrowth = 1.08;
+    wp.unlockCost = t === 1 ? 0 : Math.floor(5 * Math.pow(t, 2.2));
     wp.maxLevel = 100;
 }
 
@@ -265,7 +265,7 @@ export const getWeaponCount = (state) => {
 
 export const getSynergyBonus = (state) => {
     const count = getWeaponCount(state);
-    return count * 0.02;
+    return count * 0.05;
 };
 
 export const getWeaponUpgradeCost = (state, weaponId) => {

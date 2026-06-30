@@ -10,10 +10,10 @@ limits: {
 maxPrestigeMultiplier: 3.0,
 maxIncome: 200000,
 maxCritChance: 0.7,
-maxDamage: 300000,
+maxDamage: 1000000,
 maxPower: 150,
 maxHealth: 20000,
-maxEnemyHp: 1000000
+maxEnemyHp: 5000000
 },
 difficulty: {
 enemyGoldMult: 1.0,
