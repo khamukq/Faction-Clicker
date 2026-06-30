@@ -96,12 +96,12 @@ const renderWeaponCard = (wp) => {
                 <div style="flex:1;">
                     <div style="display:flex;align-items:center;gap:8px;">
                         <span style="color:${unlocked ? '#e0d6c8' : '#5a4a3a'};font-weight:700;font-size:15px;">
-                            ${isCurrent ? '▶ ' : ''}${wp.name}
+                            ${wp.icon || ''} ${isCurrent ? '▶ ' : ''}${wp.name}
                         </span>
                         <span style="color:#8a7a6a;font-size:11px;">#${wp.tier}</span>
                         <span style="color:${unlocked || (canAffordUnlock && prevUnlocked) ? '#8a7a6a' : '#4a3a2a'};font-size:11px;background:#1a1410;padding:2px 6px;border-radius:4px;">${eraName}</span>
                     </div>
-                    <div style="color:#8a7a6a;font-size:12px;margin-top:4px;">${wp.desc}</div>
+                    <div style="color:#8a7a6a;font-size:12px;margin-top:4px;">${wp.description || wp.desc || ''}</div>
                     ${unlocked ? `
                         <div style="margin-top:6px;">
                             <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;">
@@ -277,7 +277,7 @@ export const renderWeapons = () => {
             </div>
             <div style="padding:10px;background:#0a0806;border-radius:8px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                    <span style="color:#f5c842;font-weight:700;font-size:16px;">▶ ${currentWp.name}</span>
+                    <span style="color:#f5c842;font-weight:700;font-size:16px;">${currentWp.icon || ''} ▶ ${currentWp.name}</span>
                     <span style="color:#f87171;font-weight:700;font-size:14px;">${fmt(currentDmg)} урона</span>
                 </div>
                 <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;">
