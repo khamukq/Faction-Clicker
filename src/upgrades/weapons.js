@@ -40,7 +40,7 @@ for (const wp of WEAPONS) {
     wp.baseDamage = Math.floor(dmgPow + dmgPow * posInEra * 2);
     wp.damagePerLevel = +(wp.baseDamage * 0.1).toFixed(1);
     wp.baseCost = Math.floor(50 + Math.pow(t, 2.5));
-    wp.costGrowth = 1.08;
+    wp.costGrowth = 1.05;
     wp.unlockCost = t === 1 ? 0 : Math.floor(100 + Math.pow(t, 2.2));
     wp.maxLevel = 100;
 }
@@ -65,7 +65,7 @@ export const getWeaponDamage = (state, weaponId) => {
     if (!wp) return 0;
     const ws = getWeaponState(state, weaponId);
     if (!ws.unlocked) return 0;
-    return wp.baseDamage + wp.damagePerLevel * ws.level;
+    return wp.baseDamage + wp.damagePerLevel * Math.pow(ws.level, 1.15);
 };
 
 export const getTotalWeaponDamage = (state) => {
