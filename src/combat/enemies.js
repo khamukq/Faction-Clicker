@@ -2,7 +2,7 @@ import { S } from '../core/state.js';
 import { CONFIG } from '../core/config.js';
 
 export const ENEMIES = [
-    { name: 'Гоблин', emoji: '👹', hp: 40, damage: 3, armor: 0, gold: 2, exp: 3 },
+    { name: 'Гоблин', emoji: '👹', hp: 40, damage: 2, armor: 0, gold: 2, exp: 3 },
     { name: 'Орк', emoji: '👺', hp: 80, damage: 5, armor: 1, gold: 4, exp: 5 },
     { name: 'Тролль', emoji: '🧌', hp: 150, damage: 8, armor: 2, gold: 8, exp: 10 },
     { name: 'Рыцарь', emoji: '⚔️', hp: 250, damage: 12, armor: 3, gold: 18, exp: 18 },
