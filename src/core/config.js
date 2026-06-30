@@ -8,12 +8,12 @@ prestigeFormula: (totalGold) => {
 },
 limits: {
 maxPrestigeMultiplier: 3.0,
-maxIncome: 50000,
+maxIncome: 200000,
 maxCritChance: 0.7,
-maxDamage: 150000,
+maxDamage: 300000,
 maxPower: 150,
-maxHealth: 5000,
-maxEnemyHp: 500000
+maxHealth: 20000,
+maxEnemyHp: 1000000
 },
 difficulty: {
 enemyGoldMult: 1.0,

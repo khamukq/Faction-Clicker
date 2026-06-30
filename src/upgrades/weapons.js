@@ -209,8 +209,15 @@ const ERA_NAMES = [
 ];
 
 for (const wp of WEAPONS) {
-    wp.eraIndex = Math.floor((wp.tier - 1) / 10);
+    const t = wp.tier;
+    wp.eraIndex = Math.floor((t - 1) / 10);
     wp.era = ERA_NAMES[wp.eraIndex] || '';
+    wp.baseDamage = +(1 + (t - 1) * 0.35).toFixed(2);
+    wp.damagePerLevel = +(0.3 + (t - 1) * 0.02).toFixed(3);
+    wp.baseCost = +(5 + (t - 1) * 2.5).toFixed(1);
+    wp.costGrowth = 1.07;
+    wp.unlockCost = t === 1 ? 0 : Math.floor(10 * Math.pow(t - 1, 1.3));
+    wp.maxLevel = 100;
 }
 
 export const getWeaponEra = (wp) => ERA_NAMES[Math.floor((wp.tier - 1) / 10)] || '';
