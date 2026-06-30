@@ -57,7 +57,9 @@ const defaultState = {
         level: 0,
         timer: null,
         interval: CONFIG.autoClicker.interval
-    }
+    },
+    weapon: 'weapon_001',
+    weapons: {}
 };
 
 let state = JSON.parse(JSON.stringify(defaultState));

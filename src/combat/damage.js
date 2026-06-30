@@ -2,6 +2,7 @@ import { S } from '../core/state.js';
 import { CONFIG } from '../core/config.js';
 import { RNG, getF } from '../core/utils.js';
 import { EventBus } from '../core/eventBus.js';
+import { getTotalWeaponDamage, getSynergyBonus, getWeaponCount } from '../upgrades/weapons.js';
 
 const computeRawDamage = () => {
     const lvl = S.level;
@@ -20,7 +21,10 @@ const computeRawDamage = () => {
 
     let ascensionMult = 1 + S.ascension * 0.1;
 
-    let dmg = (base + levelBonus + totalArmyDamage + bonusDamage) * factionMult * prestigeMult * ascensionMult;
+    let weaponDamage = getTotalWeaponDamage(S) * (1 + getSynergyBonus(S));
+    let weaponCount = getWeaponCount(S);
+
+    let dmg = (base + levelBonus + totalArmyDamage + bonusDamage + weaponDamage) * factionMult * prestigeMult * ascensionMult;
 
     if (S.b.factionBonus?.imperial_order?.active) {
         dmg *= S.b.factionBonus.imperial_order.damageMult;

@@ -14,7 +14,7 @@ renderUpgrades, renderFactions, renderClans,
 renderPrestige, renderAscension, renderPerks,
 renderActiveSkills, renderAutoClickerUI,
 renderLevelStats, renderProfile, renderLeaderboard,
-renderAchievements
+renderAchievements, renderWeapons
 } from './ui/renderer.js';
 import { toggleAutoClicker, upgradeAutoClicker } from './auto/autoclicker.js';
 import { activateSkill } from './ui/renderer.js';
@@ -237,6 +237,7 @@ const renderFullUI = () => {
     renderProfile();
     renderLeaderboard();
     renderAchievements();
+    renderWeapons();
 };
 
 const enterGame = () => {
@@ -263,6 +264,7 @@ function startGame() {
     renderProfile();
     renderLeaderboard();
     renderAchievements();
+    renderWeapons();
     saveGame();
     addBattleLog(`[Start] Добро пожаловать, ${S.nickname}! Фракция: ${F[S.f]?.name}`, 'log-gold');
 }
@@ -444,6 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'leaderboard': renderLeaderboard(); break;
                 case 'profile': renderProfile(); break;
                 case 'achievements': renderAchievements(); break;
+                case 'weapons': renderWeapons(); break;
                 default: break;
             }
         };

@@ -16,3 +16,4 @@ export { renderLevelStats } from './tabs/levelStats.js';
 export { renderProfile } from './tabs/profile.js';
 export { renderLeaderboard, showPlayerProfile } from './tabs/leaderboard.js';
 export { renderAchievements } from './tabs/achievements.js';
+export { renderWeapons } from './tabs/weapons.js';

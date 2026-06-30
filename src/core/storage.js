@@ -40,6 +40,8 @@ const getSaveData = () => ({
         level: S.autoClicker.level,
         interval: S.autoClicker.interval
     },
+    weapon: S.weapon,
+    weapons: S.weapons,
     lastSave: Date.now()
 });
 
@@ -114,6 +116,11 @@ export const migrateSave = (data) => {
             };
         }
         if (!data.isSuperBoss) data.isSuperBoss = false;
+        if (!data.weapon) data.weapon = 'weapon_001';
+        if (!data.weapons) {
+            data.weapons = {};
+            data.weapons.weapon_001 = { level: 1, unlocked: true };
+        }
         data.version = CONFIG.VERSION;
     }
     return data;
