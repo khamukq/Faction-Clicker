@@ -94,7 +94,7 @@ export const getWeaponCount = (state) => {
 
 export const getSynergyBonus = (state) => {
     const count = getWeaponCount(state);
-    return count * 0.05;
+    return count * 0.15;
 };
 
 export const getWeaponUpgradeCost = (state, weaponId) => {
