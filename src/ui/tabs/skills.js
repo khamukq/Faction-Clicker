@@ -12,22 +12,22 @@ export const activateSkill = (skillId) => {
         addBattleLog('[X] Способность не найдена', 'log-damage');
         return;
     }
-    if (S.activeSkills[skillId]?.active) {
+    if (S.faction.activeSkills[skillId]?.active) {
         addBattleLog('[CD] Способность уже активна!', 'log-damage');
         return;
     }
-    if (S.activeSkills[skillId]?.cooldown > Date.now()) {
-        const remaining = Math.ceil((S.activeSkills[skillId].cooldown - Date.now()) / 1000);
+    if (S.faction.activeSkills[skillId]?.cooldown > Date.now()) {
+        const remaining = Math.ceil((S.faction.activeSkills[skillId].cooldown - Date.now()) / 1000);
         addBattleLog(`[CD] Перезарядка: ${remaining} сек`, 'log-damage');
         return;
     }
     if (skill.effect) skill.effect(S);
-    S.activeSkills[skillId] = {
+    S.faction.activeSkills[skillId] = {
         active: true,
         cooldown: Date.now() + skill.cooldown * 1000,
         timer: setTimeout(() => {
             if (skill.deactivate) skill.deactivate(S);
-            S.activeSkills[skillId].active = false;
+            S.faction.activeSkills[skillId].active = false;
             addBattleLog(`[CD] ${skill.name} закончилась`, 'log-damage');
             recalculateStats();
             updateUI();
@@ -40,7 +40,7 @@ export const activateSkill = (skillId) => {
 
 export const renderActiveSkills = () => {
     const container = $('skillsContainer');
-    if (!container || !S.f) {
+    if (!container || !S.faction.id) {
         if (container) container.innerHTML = '';
         return;
     }
@@ -51,7 +51,7 @@ export const renderActiveSkills = () => {
         return;
     }
     container.innerHTML = skills.map(skill => {
-        const state = S.activeSkills[skill.id] || { active: false, cooldown: 0 };
+        const state = S.faction.activeSkills[skill.id] || { active: false, cooldown: 0 };
         const isActive = state.active || false;
         const isReady = !state.cooldown || state.cooldown < Date.now();
         const cooldownLeft = state.cooldown ? Math.ceil((state.cooldown - Date.now()) / 1000) : 0;

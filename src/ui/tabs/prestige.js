@@ -6,19 +6,19 @@ import { performPrestige } from '../../progression/prestige.js';
 export const renderPrestige = () => {
     const container = $('prestigeContainer');
     if (!container) return;
-    if (!S.f) { container.innerHTML = ''; return; }
+    if (!S.faction.id) { container.innerHTML = ''; return; }
 
-    const potential = CONFIG.prestigeFormula(S.totalGold);
-    const can = S.totalGold >= 100000 && potential > S.prestigePoints;
-    const newMult = 1 + Math.log10(1 + (S.totalPrestigePoints + potential) * 0.2);
+    const potential = CONFIG.prestigeFormula(S.player.totalGold);
+    const can = S.player.totalGold >= 100000 && potential > S.meta.prestigePoints;
+    const newMult = 1 + Math.log10(1 + (S.meta.totalPrestigePoints + potential) * 0.2);
 
     container.innerHTML = `
         <div style="background:#0f0a08;border:2px solid #f5c842;border-radius:12px;padding:20px;margin:10px 0;text-align:center;">
             <h3 style="color:#f5c842;">🌟 ПРЕСТИЖ</h3>
-            <div style="color:#a08060;margin:10px 0;">Очков престижа: <span style="color:#f5c842;font-weight:700;">${S.prestigePoints}</span></div>
-            <div style="color:#a08060;margin:10px 0;">Постоянный множитель: <span style="color:#34d399;font-weight:700;">x${S.permanentMultiplier.toFixed(2)}</span></div>
+            <div style="color:#a08060;margin:10px 0;">Очков престижа: <span style="color:#f5c842;font-weight:700;">${S.meta.prestigePoints}</span></div>
+            <div style="color:#a08060;margin:10px 0;">Постоянный множитель: <span style="color:#34d399;font-weight:700;">x${S.meta.permanentMultiplier.toFixed(2)}</span></div>
             <div style="color:#8a7a6a;margin:10px 0;font-size:14px;">
-                Всего заработано: <span style="color:#fbbf24;">${fmt(S.totalGold)}💰</span>
+                Всего заработано: <span style="color:#fbbf24;">${fmt(S.player.totalGold)}💰</span>
                 <br>Доступно очков: <span style="color:#f5c842;">${potential}</span>
                 <br>Новый множитель: <span style="color:#34d399;">x${newMult.toFixed(2)}</span>
             </div>

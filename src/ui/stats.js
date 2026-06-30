@@ -20,50 +20,50 @@ const applyFactionPassives = () => {
 };
 
 const applyPerks = () => {
-    for (const id of S.perks) {
+    for (const id of S.faction.perks) {
         const perk = PERKS[id];
         if (perk?.apply) perk.apply(S);
     }
 };
 
 export const recalculateStats = () => {
-    S.b = defaultBonuses();
+    S.faction.bonuses = defaultBonuses();
 
-    if (S.f) {
+    if (S.faction.id) {
         const faction = getF();
         for (const u of getUs()) {
             const lv = getU(u.id);
             if (!lv) continue;
             const val = u.e.v * lv;
             switch (u.e.t) {
-                case 'passive': S.b.passive += val; break;
-                case 'gold': S.b.gold += val; break;
-                case 'damage': S.b.damage += val; break;
-                case 'critChance': S.b.critChance = Math.min(CONFIG.limits.maxCritChance, S.b.critChance + val); break;
-                case 'critMultiplier': S.b.critMultiplier = 1.5 + lv * 0.3; break;
-                case 'armyPassive': S.b.armyPassive += val; break;
-                case 'armyDamage': S.b.armyDamage += val; break;
-                case 'hireDiscount': S.b.hireDiscount = Math.min(0.5, val); break;
-                case 'healRegen': S.b.healRegen += val; break;
-                case 'hpBonus': S.b.hpBonus += val; break;
-                case 'defense': S.b.defense += val; break;
+                case 'passive': S.faction.bonuses.passive += val; break;
+                case 'gold': S.faction.bonuses.gold += val; break;
+                case 'damage': S.faction.bonuses.damage += val; break;
+                case 'critChance': S.faction.bonuses.critChance = Math.min(CONFIG.limits.maxCritChance, S.faction.bonuses.critChance + val); break;
+                case 'critMultiplier': S.faction.bonuses.critMultiplier = 1.5 + lv * 0.3; break;
+                case 'armyPassive': S.faction.bonuses.armyPassive += val; break;
+                case 'armyDamage': S.faction.bonuses.armyDamage += val; break;
+                case 'hireDiscount': S.faction.bonuses.hireDiscount = Math.min(0.5, val); break;
+                case 'healRegen': S.faction.bonuses.healRegen += val; break;
+                case 'hpBonus': S.faction.bonuses.hpBonus += val; break;
+                case 'defense': S.faction.bonuses.defense += val; break;
                 case 'boost':
-                    S.b.boostMul = u.e.v || 2;
-                    S.b.boostDur = u.e.dur || 15;
-                    S.b.boostCD = u.e.cd || 120;
+                    S.faction.bonuses.boostMul = u.e.v || 2;
+                    S.faction.bonuses.boostDur = u.e.dur || 15;
+                    S.faction.bonuses.boostCD = u.e.cd || 120;
                     break;
             }
         }
         if (faction?.multiplier) {
-            S.b.damage = Math.floor(S.b.damage * faction.multiplier);
-            S.b.gold = Math.floor(S.b.gold * faction.multiplier);
+            S.faction.bonuses.damage = Math.floor(S.faction.bonuses.damage * faction.multiplier);
+            S.faction.bonuses.gold = Math.floor(S.faction.bonuses.gold * faction.multiplier);
         }
         applyFactionPassives();
     }
 
     applyPerks();
 
-    S.maxHp = 100 + (S.levelStats.hpBonus || 0) + (S.b.hpBonus || 0);
-    if (S.hp > S.maxHp) S.hp = S.maxHp;
+    S.player.maxHp = 100 + (S.player.levelStats.hpBonus || 0) + (S.faction.bonuses.hpBonus || 0);
+    if (S.player.hp > S.player.maxHp) S.player.hp = S.player.maxHp;
     updateUI();
 };

@@ -73,7 +73,7 @@ export const renderLeaderboard = async () => {
                     <tbody>`;
 
     entries.forEach((entry, index) => {
-        const isMe = entry.nickname === S.nickname;
+        const isMe = entry.nickname === S.player.nickname;
         html += `
             <tr style="border-bottom:1px solid #1a1410;${isMe ? 'background:#2a1f18;' : ''}">
                 <td style="padding:8px;color:${index < 3 ? '#f5c842' : '#8a7a6a'};font-weight:${index < 3 ? '700' : '400'};">

@@ -5,17 +5,17 @@ import { CONFIG } from '../../core/config.js';
 export const renderAutoClickerUI = () => {
     const container = $('autoClickerContainer');
     if (!container) return;
-    if (!S.f) {
+    if (!S.faction.id) {
         container.innerHTML = '<p style="color:#8a7a6a;">Выбери фракцию</p>';
         return;
     }
 
-    const isActive = S.autoClicker.enabled;
-    const level = S.autoClicker.level;
+    const isActive = S.auto.enabled;
+    const level = S.auto.level;
     const maxLevel = CONFIG.autoClicker.maxLevel;
-    const currentInterval = S.autoClicker.interval || CONFIG.autoClicker.interval;
+    const currentInterval = S.auto.interval || CONFIG.autoClicker.interval;
     const upgradeCost = CONFIG.autoClicker.upgradeCost * (level + 1);
-    const canUpgrade = level < maxLevel && S.gold >= upgradeCost;
+    const canUpgrade = level < maxLevel && S.player.gold >= upgradeCost;
 
     container.innerHTML = `
         <div style="background:#0f0a08;border:2px solid ${isActive ? '#34d399' : '#3d2b1f'};border-radius:12px;padding:20px;margin:10px 0;text-align:center;">

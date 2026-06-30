@@ -36,13 +36,13 @@ export const loadGameFromFirebase = async () => {
     if (data) {
         const migrated = migrateSave(data);
         loadState(migrated);
-        if (S.autoClicker.enabled && S.f) {
-            if (S.autoClicker.timer) clearInterval(S.autoClicker.timer);
-            S.autoClicker.timer = setInterval(() => {
-                if (S.f && S.hp > 0) {
+        if (S.auto.enabled && S.faction.id) {
+            if (S.auto.timer) clearInterval(S.auto.timer);
+            S.auto.timer = setInterval(() => {
+                if (S.faction.id && S.player.hp > 0) {
                     import('../combat/battle.js').then(({ attack }) => attack());
                 }
-            }, S.autoClicker.interval);
+            }, S.auto.interval);
         }
         return true;
     }
@@ -148,13 +148,13 @@ export const loadGame = () => {
         }
         const migrated = migrateSave(data);
         loadState(migrated);
-        if (S.autoClicker.enabled && S.f) {
-            if (S.autoClicker.timer) clearInterval(S.autoClicker.timer);
-            S.autoClicker.timer = setInterval(() => {
-                if (S.f && S.hp > 0) {
+        if (S.auto.enabled && S.faction.id) {
+            if (S.auto.timer) clearInterval(S.auto.timer);
+            S.auto.timer = setInterval(() => {
+                if (S.faction.id && S.player.hp > 0) {
                     import('../combat/battle.js').then(({ attack }) => attack());
                 }
-            }, S.autoClicker.interval);
+            }, S.auto.interval);
         }
         return true;
     } catch (e) { return false; }

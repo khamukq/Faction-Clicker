@@ -27,30 +27,30 @@ export const syncLeaderboardFromFirebase = async () => {
 };
 
 export const addToLeaderboard = () => {
-    if (!S.f || !S.nickname) {
+    if (!S.faction.id || !S.player.nickname) {
         console.warn('addToLeaderboard: фракция или никнейм не заданы');
         return;
     }
     const entries = getLeaderboard();
-    const factionName = F[S.f]?.name || S.f;
+    const factionName = F[S.faction.id]?.name || S.faction.id;
     const newEntry = {
         id: Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-        nickname: S.nickname,
-        gold: S.gold,
-        totalGold: S.totalGold,
-        kills: S.totalKills,
-        upgrades: Object.values(S.u).reduce((sum, lv) => sum + lv, 0),
-        prestige: S.prestigePoints,
-        permanent: S.permanentMultiplier,
-        ascension: S.ascension,
-        level: S.level,
-        floor: S.floor,
+        nickname: S.player.nickname,
+        gold: S.player.gold,
+        totalGold: S.player.totalGold,
+        kills: S.progression.totalKills,
+        upgrades: Object.values(S.player.u).reduce((sum, lv) => sum + lv, 0),
+        prestige: S.meta.prestigePoints,
+        permanent: S.meta.permanentMultiplier,
+        ascension: S.meta.ascension,
+        level: S.player.level,
+        floor: S.progression.floor,
         faction: factionName,
-        factionId: S.f,
-        clan: S.clanName || 'Нет клана',
+        factionId: S.faction.id,
+        clan: S.faction.clanName || 'Нет клана',
         date: new Date().toISOString()
     };
-    const filtered = entries.filter(e => e.nickname !== S.nickname);
+    const filtered = entries.filter(e => e.nickname !== S.player.nickname);
     filtered.push(newEntry);
     filtered.sort((a, b) => b.prestige - a.prestige);
     if (filtered.length > 50) filtered.length = 50;

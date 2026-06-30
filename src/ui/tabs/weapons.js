@@ -22,15 +22,15 @@ const getEraWeapons = (eraIdx) => WEAPONS.filter(w => getEraForWeapon(w.tier) ==
 const isEraFullyUnlocked = (eraIdx) => getEraWeapons(eraIdx).every(w => getWeaponUnlocked(S, w.id));
 
 const renderWeaponCard = (wp) => {
-    const ws = S.weapons[wp.id];
+    const ws = S.weapons.inventory[wp.id];
     const unlocked = ws?.unlocked;
     const level = ws?.level || 0;
     const maxLvl = getMaxLevelForWeapon(S, wp.id);
     const damage = getWeaponDamage(S, wp.id);
-    const isCurrent = S.weapon === wp.id;
-    const canAffordUnlock = S.gold >= wp.unlockCost;
+    const isCurrent = S.weapons.current === wp.id;
+    const canAffordUnlock = S.player.gold >= wp.unlockCost;
     const upgradeCost = unlocked ? getWeaponUpgradeCost(S, wp.id) : Infinity;
-    const canAffordUpgrade = S.gold >= upgradeCost;
+    const canAffordUpgrade = S.player.gold >= upgradeCost;
     const atMaxLevel = level >= maxLvl;
     const prevWp = WEAPONS[wp.tier - 2];
     const prevUnlocked = !prevWp || getWeaponUnlocked(S, prevWp.id);
@@ -97,7 +97,7 @@ const renderEraBlock = (eraIdx) => {
                 <div style="display:flex;gap:3px;">
                     ${weapons.map(w => {
                         const u = getWeaponUnlocked(S, w.id);
-                        const c = S.weapon === w.id;
+                        const c = S.weapons.current === w.id;
                         let d = '#1a1410';
                         if (c) d = '#f5c842';
                         else if (u) d = '#34d399';
@@ -138,7 +138,7 @@ const renderSmartAdvisor = () => {
                 const gain = wp.damagePerLevel;
                 if (gain > bestUpgradeGain) { bestUpgradeGain = gain; bestUpgrade = wp; }
             }
-        } else if ((!WEAPONS[wp.tier - 2] || getWeaponUnlocked(S, WEAPONS[wp.tier - 2].id)) && S.gold >= wp.unlockCost) {
+        } else if ((!WEAPONS[wp.tier - 2] || getWeaponUnlocked(S, WEAPONS[wp.tier - 2].id)) && S.player.gold >= wp.unlockCost) {
             const gain = wp.baseDamage + wp.damagePerLevel;
             if (gain > bestBuyGain) { bestBuyGain = gain; bestBuy = wp; }
         }
@@ -153,7 +153,7 @@ const renderSmartAdvisor = () => {
 export const renderWeapons = () => {
     const c = $('weaponsContainer');
     if (!c) return;
-    if (!S.f) { c.innerHTML = '<p style="color:#8a7a6a;">Выбери фракцию</p>'; return; }
+    if (!S.faction.id) { c.innerHTML = '<p style="color:#8a7a6a;">Выбери фракцию</p>'; return; }
 
     const totalDmg = getTotalWeaponDamage(S);
     const weaponCount = getWeaponCount(S);
@@ -226,7 +226,7 @@ export const renderWeapons = () => {
             else upgraded = upgradeWeaponN(S, id, parseInt(n));
             if (upgraded > 0) {
                 const wp = WEAPONS.find(w => w.id === id);
-                EventBus.emit('log:add', { msg: `[Up] ${wp.name} ×${upgraded} → ${S.weapons[id].level} ур.`, cls: 'log-gold' });
+                EventBus.emit('log:add', { msg: `[Up] ${wp.name} ×${upgraded} → ${S.weapons.inventory[id].level} ур.`, cls: 'log-gold' });
                 saveGame();
                 renderWeapons();
             }
@@ -234,7 +234,7 @@ export const renderWeapons = () => {
     });
 
     document.querySelectorAll('.weapon-select-btn').forEach(b => {
-        b.onclick = () => { S.weapon = b.dataset.id; renderWeapons(); };
+        b.onclick = () => { S.weapons.current = b.dataset.id; renderWeapons(); };
     });
 
     document.querySelectorAll('.era-header').forEach(el => {

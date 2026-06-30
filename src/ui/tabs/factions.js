@@ -18,7 +18,7 @@ export const renderFactions = () => {
     const c = $('factionsContainer');
     if (!c) return;
     c.innerHTML = Object.values(F).map(f => `
-        <div class="faction-card ${S.f === f.id ? 'selected' : ''}" data-faction="${f.id}">
+        <div class="faction-card ${S.faction.id === f.id ? 'selected' : ''}" data-faction="${f.id}">
             <h3>${f.iconSvg || f.emoji} ${f.name}</h3>
             <p style="color:#8a7a6a;font-size:14px;">${f.style}</p>
             <div style="color:#34d399;font-size:13px;">${ICONS.boost} Множитель: x${f.multiplier}</div>
@@ -28,15 +28,15 @@ export const renderFactions = () => {
             <div style="color:#a08060;font-size:12px;">
                 <strong>Активные:</strong> ${f.unique.actives.map(a => `${a.icon} ${a.name}`).join(' • ')}
             </div>
-            ${S.f === f.id ? `<div style="color:#f5c842;margin-top:10px;font-weight:700;">${ICONS.check} Выбрано</div>` : ''}
+            ${S.faction.id === f.id ? `<div style="color:#f5c842;margin-top:10px;font-weight:700;">${ICONS.check} Выбрано</div>` : ''}
         </div>`).join('');
 
     document.querySelectorAll('.faction-card').forEach(card => {
         card.onclick = () => {
             const id = card.dataset.faction;
-            if (S.f === id) return;
+            if (S.faction.id === id) return;
             if (confirm('Сменить фракцию? Всё будет сброшено, кроме престижа и перков!')) {
-                S.f = id;
+                S.faction.id = id;
                 resetGame();
                 spawnEnemy();
                 recalculateStats();

@@ -12,45 +12,45 @@ import { ERAS } from '../../features/eras.js';
 let subTab = 'upgrades';
 
 export const activateBoost = () => {
-    if (S.b.boost) {
+    if (S.faction.bonuses.boost) {
         addBattleLog('[CD] Буст уже активен!', 'log-damage');
         return false;
     }
-    if (S.boostCooldown && Date.now() - S.boostCooldown < S.b.boostCD * 1000) {
-        const remaining = Math.ceil((S.b.boostCD * 1000 - (Date.now() - S.boostCooldown)) / 1000);
+    if (S.player.boostCooldown && Date.now() - S.player.boostCooldown < S.faction.bonuses.boostCD * 1000) {
+        const remaining = Math.ceil((S.faction.bonuses.boostCD * 1000 - (Date.now() - S.player.boostCooldown)) / 1000);
         addBattleLog(`[CD] Буст перезаряжается: ${remaining} сек`, 'log-damage');
         return false;
     }
-    S.b.boost = true;
-    S.boostCooldown = Date.now();
-    addBattleLog(`[Boost] БУСТ АКТИВИРОВАН! x${S.b.boostMul} доход на ${S.b.boostDur} сек`, 'log-gold');
-    if (S.boostTimer) clearTimeout(S.boostTimer);
-    S.boostTimer = setTimeout(() => {
-        S.b.boost = false;
-        S.boostTimer = null;
+    S.faction.bonuses.boost = true;
+    S.player.boostCooldown = Date.now();
+    addBattleLog(`[Boost] БУСТ АКТИВИРОВАН! x${S.faction.bonuses.boostMul} доход на ${S.faction.bonuses.boostDur} сек`, 'log-gold');
+    if (S.player.boostTimer) clearTimeout(S.player.boostTimer);
+    S.player.boostTimer = setTimeout(() => {
+        S.faction.bonuses.boost = false;
+        S.player.boostTimer = null;
         addBattleLog('[CD] Буст закончился', 'log-damage');
         recalculateStats();
-    }, S.b.boostDur * 1000);
+    }, S.faction.bonuses.boostDur * 1000);
     recalculateStats();
     return true;
 };
 
 export const buyUpgrade = (id) => {
-    if (!S.f) return;
+    if (!S.faction.id) return;
     const u = getUs().find(x => x.id === id);
     if (!u) return;
     const pr = price(u);
-    if (S.gold < pr) return;
+    if (S.player.gold < pr) return;
 
-    S.gold -= pr;
-    S.u[id] = (S.u[id] || 0) + 1;
+    S.player.gold -= pr;
+    S.player.u[id] = (S.player.u[id] || 0) + 1;
     recalculateStats();
-    EventBus.emit('log:add', { msg: `[Up] ${u.name} → ${S.u[id]} ур.`, cls: 'log-gold' });
+    EventBus.emit('log:add', { msg: `[Up] ${u.name} → ${S.player.u[id]} ур.`, cls: 'log-gold' });
     renderUpgrades();
     saveGame();
     checkAchievements();
 
-    if (u.e.t === 'boost' && S.u[id] === 1) {
+    if (u.e.t === 'boost' && S.player.u[id] === 1) {
         setTimeout(() => activateBoost(), 100);
     }
 };
@@ -90,7 +90,7 @@ const renderEras = () => {
 export const renderUpgrades = () => {
     const c = $('upgradesContainer');
     if (!c) return;
-    if (!S.f) {
+    if (!S.faction.id) {
         c.innerHTML = '<p style="color:#8a7a6a;">Выбери фракцию</p>';
         return;
     }
@@ -113,9 +113,9 @@ export const renderUpgrades = () => {
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
                 <div>
                     <div style="color:#f5c842;font-weight:700;font-size:18px;">${ICONS.swords} Нанять отряд</div>
-                    <div style="color:#8a7a6a;font-size:13px;">Армия: <span style="color:#f5c842;font-weight:700;">${S.a || 0}</span></div>
+                    <div style="color:#8a7a6a;font-size:13px;">Армия: <span style="color:#f5c842;font-weight:700;">${S.player.a || 0}</span></div>
                     <div style="color:#8a7a6a;font-size:13px;">Стоимость: <span style="color:#fbbf24;font-weight:700;">${fmt(hireCost)}</span> ${ICONS.coin}</div>
-                    <div style="color:#34d399;font-size:12px;">+${S.b.armyDamage || 0} урона, +${S.b.armyPassive || 0} золота/сек</div>
+                    <div style="color:#34d399;font-size:12px;">+${S.faction.bonuses.armyDamage || 0} урона, +${S.faction.bonuses.armyPassive || 0} золота/сек</div>
                 </div>
                 <button id="hireBtnUpgrade" class="btn-primary" style="padding:12px 30px;font-size:18px;opacity:${canAffordHire ? 1 : 0.5};cursor:${canAffordHire ? 'pointer' : 'not-allowed'};">
                     ${ICONS.swords} Нанять (${fmt(hireCost)}) ${ICONS.coin}
@@ -128,7 +128,7 @@ export const renderUpgrades = () => {
         html += `
             <div style="margin-bottom:15px;padding:15px;background:#0f0a08;border:2px solid #a855f7;border-radius:12px;">
                 <button id="activateBoostBtn" style="padding:12px 30px;font-size:16px;background:#6b3a4a;border:2px solid #a855f7;color:#a855f7;border-radius:8px;cursor:pointer;width:100%;">
-                    ${ICONS.boost} АКТИВИРОВАТЬ БУСТ (${S.b.boostDur} сек)
+                    ${ICONS.boost} АКТИВИРОВАТЬ БУСТ (${S.faction.bonuses.boostDur} сек)
                 </button>
             </div>`;
     }
@@ -136,7 +136,7 @@ export const renderUpgrades = () => {
     html += getUs().map(u => {
         const lv = getU(u.id);
         const pr = price(u);
-        const canAfford = S.gold >= pr;
+        const canAfford = S.player.gold >= pr;
         const nextEffect = getNextEffect(u);
         return `<div class="upgrade-card">
             <div class="upgrade-info">

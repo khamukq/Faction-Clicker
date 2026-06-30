@@ -8,7 +8,7 @@ export const renderClans = async () => {
 
     await syncClansFromFirebase();
     const clans = getClans();
-    const userClan = S.clan ? clans.find(cl => cl.id === S.clan) : null;
+    const userClan = S.faction.clan ? clans.find(cl => cl.id === S.faction.clan) : null;
 
     let html = `
         <div style="margin:10px 0;">
@@ -25,7 +25,7 @@ export const renderClans = async () => {
                 <div style="color:#8a7a6a;font-size:13px;">👥 Участников: ${userClan.members.length}</div>
                 <div style="color:#8a7a6a;font-size:13px;">⬆️ Уровень: ${userClan.level}</div>
                 <div style="color:#8a7a6a;font-size:13px;">💰 След. улучшение: ${fmt(userClan.upgradeCost)}</div>
-                ${userClan.leader === S.nickname ? `
+                ${userClan.leader === S.player.nickname ? `
                     <button onclick="window.upgradeClan()" style="margin-top:10px;padding:8px 20px;background:#6b3a4a;border:2px solid #f5c842;color:#f5c842;border-radius:8px;cursor:pointer;font-weight:700;">
                         ⬆️ Улучшить клан
                     </button>` : ''}
@@ -41,7 +41,7 @@ export const renderClans = async () => {
         html += `<p style="color:#6b3a4a;text-align:center;padding:20px;">Нет созданных кланов. Будь первым! 🚀</p>`;
     } else {
         clans.forEach(clan => {
-            const isMember = clan.members.includes(S.nickname);
+            const isMember = clan.members.includes(S.player.nickname);
             const isFull = clan.members.length >= 20;
             html += `
                 <div style="background:#0f0a08;border:1px solid ${isMember ? '#f5c842' : '#3d2b1f'};border-radius:10px;padding:12px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
@@ -50,7 +50,7 @@ export const renderClans = async () => {
                         <div style="color:#8a7a6a;font-size:12px;">👑 ${clan.leader} • 👥 ${clan.members.length}/20 участников</div>
                         <div style="color:#8a7a6a;font-size:11px;">⬆️ Уровень ${clan.level}</div>
                     </div>
-                    ${!isMember && S.nickname && !isFull ? `
+                    ${!isMember && S.player.nickname && !isFull ? `
                         <button onclick="window.joinClan('${clan.id}')" style="padding:6px 16px;background:#3d2b1f;border:2px solid #8b7355;color:#d4c5a0;border-radius:6px;cursor:pointer;font-weight:600;">
                             Вступить
                         </button>` : isMember ? `
@@ -61,7 +61,7 @@ export const renderClans = async () => {
     }
     html += `</div>`;
 
-    if (!userClan && S.nickname) {
+    if (!userClan && S.player.nickname) {
         html += `
             <div style="margin-top:15px;padding:15px;background:#0f0a08;border:2px solid #3d2b1f;border-radius:12px;">
                 <div style="color:#8a7a6a;font-size:13px;margin-bottom:8px;">💰 Стоимость создания: 5000 золота</div>

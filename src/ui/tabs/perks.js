@@ -9,16 +9,16 @@ import { ICONS } from '../../core/icons.js';
 export const buyPerk = (id) => {
     const perk = PERKS[id];
     if (!perk) return;
-    if (S.perks.includes(id)) {
+    if (S.faction.perks.includes(id)) {
         addBattleLog('[X] Перк уже куплен!', 'log-damage');
         return;
     }
-    if (S.prestigePoints < perk.cost) {
+    if (S.meta.prestigePoints < perk.cost) {
         addBattleLog('[X] Не хватает очков престижа!', 'log-damage');
         return;
     }
-    S.prestigePoints -= perk.cost;
-    S.perks.push(id);
+    S.meta.prestigePoints -= perk.cost;
+    S.faction.perks.push(id);
     recalculateStats();
     addBattleLog(`[Perk] "${perk.name}" активирован!`, 'log-gold');
     renderPerks();
@@ -28,7 +28,7 @@ export const buyPerk = (id) => {
 export const renderPerks = () => {
     const c = $('perksContainer');
     if (!c) return;
-    if (!S.f) { c.innerHTML = ''; return; }
+    if (!S.faction.id) { c.innerHTML = ''; return; }
 
     let html = `
         <div style="margin:10px 0;">
@@ -38,8 +38,8 @@ export const renderPerks = () => {
             </div>`;
 
     for (const [key, perk] of Object.entries(PERKS)) {
-        const isUnlocked = S.perks.includes(key);
-        const canAfford = S.prestigePoints >= perk.cost;
+        const isUnlocked = S.faction.perks.includes(key);
+        const canAfford = S.meta.prestigePoints >= perk.cost;
         html += `
             <div class="perk-card" style="background:#0f0a08;border:2px solid ${isUnlocked ? '#a855f7' : '#3d2b1f'};border-radius:12px;padding:15px;margin:8px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
                 <div>

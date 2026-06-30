@@ -98,6 +98,12 @@ const flatToDomain = {
 
 const DOMAIN_NAMES = ['player','combat','progression','meta','faction','auto','weapons'];
 
+/* обратная карта: 'player.gold' → 'gold' */
+const domainToFlat = {};
+for (const [flat, domain] of Object.entries(flatToDomain)) {
+    domainToFlat[domain] = flat;
+}
+
 let state = JSON.parse(JSON.stringify(defaultState));
 
 function resolvePath(obj, path) {
@@ -107,9 +113,32 @@ function resolvePath(obj, path) {
     return { parent: cur, key: parts[parts.length - 1] };
 }
 
+/* доменные прокси — ловят S.player.gold = 5 */
+function emitDomainChange(domain, key, value) {
+    const fullPath = `${domain}.${key}`;
+    const flatKey = domainToFlat[fullPath] || `${domain}.${key}`;
+    EventBus.emit('state:changed', { key: flatKey, value, domain, subKey: key });
+}
+
+const domainHandler = (d) => ({
+    set(target, key, value) {
+        target[key] = value;
+        emitDomainChange(d, key, value);
+        return true;
+    }
+});
+
+const domainProxies = {};
+for (const d of DOMAIN_NAMES) {
+    domainProxies[d] = new Proxy(state[d], domainHandler(d));
+}
+
 export const S = new Proxy(state, {
     get(target, key) {
-        if (key in target) return target[key];
+        if (key in target) {
+            if (DOMAIN_NAMES.includes(key)) return domainProxies[key];
+            return target[key];
+        }
         const path = flatToDomain[key];
         if (path) return resolvePath(target, path).parent[resolvePath(target, path).key];
         return undefined;
@@ -139,13 +168,11 @@ export function setNested(obj, path, value) {
 }
 
 export function loadState(newState) {
-    // новый доменный формат
     if (DOMAIN_NAMES.some(d => d in newState)) {
         for (const d of DOMAIN_NAMES) {
-            if (newState[d]) Object.assign(state[d], newState[d]);
+            if (newState[d]) Object.assign(S[d], newState[d]);
         }
     } else {
-        // старый плоский формат — через backward‑compat сеттер
         for (const key of Object.keys(newState)) {
             S[key] = newState[key];
         }
@@ -154,20 +181,24 @@ export function loadState(newState) {
 }
 
 export function resetState() {
-    state = JSON.parse(JSON.stringify(defaultState));
+    const fresh = JSON.parse(JSON.stringify(defaultState));
+    for (const d of DOMAIN_NAMES) {
+        Object.assign(state[d], fresh[d]);
+        domainProxies[d] = new Proxy(state[d], domainHandler(d));
+    }
     EventBus.emit('state:reset');
 }
 
 /* для сохранения: экспортируем чистые данные без циклических ссылок */
 export function getStateSnapshot() {
     return {
-        player: { ...state.player },
-        combat: { ...state.combat },
-        progression: { ...state.progression },
-        meta: { ...state.meta },
-        faction: { ...state.faction, bonuses: { ...state.faction.bonuses } },
-        auto: { enabled: state.auto.enabled, level: state.auto.level, interval: state.auto.interval },
-        weapons: { current: state.weapons.current, inventory: { ...state.weapons.inventory } },
+        player: { ...S.player },
+        combat: { ...S.combat },
+        progression: { ...S.progression },
+        meta: { ...S.meta },
+        faction: { ...S.faction, bonuses: { ...S.faction.bonuses } },
+        auto: { enabled: S.auto.enabled, level: S.auto.level, interval: S.auto.interval },
+        weapons: { current: S.weapons.current, inventory: { ...S.weapons.inventory } },
         version: CONFIG.VERSION,
         lastSave: Date.now()
     };

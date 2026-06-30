@@ -26,20 +26,20 @@ chance(p) { return this.next() < p; }
 };
 })();
 
-export const getU = id => S.u[id] || 0;
-export const getF = () => F[S.f];
-export const getUs = () => S.f ? F[S.f].u : [];
+export const getU = id => S.player.u[id] || 0;
+export const getF = () => F[S.faction.id];
+export const getUs = () => S.faction.id ? F[S.faction.id].u : [];
 
 export const getHireCost = () => {
-let cost = 120 * Math.pow(CONFIG.difficulty.hireBaseMult, S.a || 0);
-if (S.b.hireDiscount > 0) cost *= (1 - S.b.hireDiscount);
+let cost = 120 * Math.pow(CONFIG.difficulty.hireBaseMult, S.player.a || 0);
+if (S.faction.bonuses.hireDiscount > 0) cost *= (1 - S.faction.bonuses.hireDiscount);
 return Math.max(1, Math.floor(cost));
 };
 
 export const price = (u) => {
 const lv = getU(u.id);
 let cost = u.base * Math.pow(CONFIG.difficulty.upgradeBaseMult, lv);
-const discount = (S.b.hireDiscount || 0);
+const discount = (S.faction.bonuses.hireDiscount || 0);
 cost *= (1 - discount);
 return Math.max(1, Math.floor(cost));
 };
@@ -87,7 +87,7 @@ return true;
 const setNick = () => {
 const name = input.value.trim();
 if (!validate(name)) return;
-S.nickname = name;
+    S.player.nickname = name;
 screen.style.display = 'none';
 // дополнительно обновим отображение
 const display = document.getElementById('nicknameDisplay');
@@ -101,10 +101,10 @@ input.addEventListener('keydown', (e) => {
 if (e.key === 'Enter') setNick();
 });
 // если уже есть сохранённый ник, можно сразу применить
-if (S.nickname) {
-screen.style.display = 'none';
-const display = document.getElementById('nicknameDisplay');
-if (display) display.textContent = S.nickname;
+if (S.player.nickname) {
+    screen.style.display = 'none';
+    const display = document.getElementById('nicknameDisplay');
+    if (display) display.textContent = S.player.nickname;
 if (onComplete) onComplete();
 }
 };
