@@ -4,22 +4,23 @@ import { saveGame } from '../../core/storage.js';
 import { PERKS } from '../../perks/perks.js';
 import { recalculateStats } from '../stats.js';
 import { addBattleLog } from '../battleLog.js';
+import { ICONS } from '../../core/icons.js';
 
 export const buyPerk = (id) => {
     const perk = PERKS[id];
     if (!perk) return;
     if (S.perks.includes(id)) {
-        addBattleLog('❌ Перк уже куплен!', 'log-damage');
+        addBattleLog('[X] Перк уже куплен!', 'log-damage');
         return;
     }
     if (S.prestigePoints < perk.cost) {
-        addBattleLog('❌ Не хватает очков престижа!', 'log-damage');
+        addBattleLog('[X] Не хватает очков престижа!', 'log-damage');
         return;
     }
     S.prestigePoints -= perk.cost;
     S.perks.push(id);
     recalculateStats();
-    addBattleLog(`🧬 Перк "${perk.name}" активирован!`, 'log-gold');
+    addBattleLog(`[Perk] "${perk.name}" активирован!`, 'log-gold');
     renderPerks();
     saveGame();
 };
@@ -31,7 +32,7 @@ export const renderPerks = () => {
 
     let html = `
         <div style="margin:10px 0;">
-            <h3 style="color:#a855f7;">🧬 ПЕРКИ</h3>
+            <h3 style="color:#a855f7;">${ICONS.perk} ПЕРКИ</h3>
             <div style="color:#8a7a6a;font-size:14px;margin-bottom:10px;">
                 Улучшают силу через специальные бонусы (сохраняются при престиже)
             </div>`;
@@ -44,11 +45,11 @@ export const renderPerks = () => {
                 <div>
                     <div style="color:${isUnlocked ? '#a855f7' : '#8a7a6a'};font-weight:700;">${perk.icon} ${perk.name}</div>
                     <div style="color:#8a7a6a;font-size:13px;">${perk.desc}</div>
-                    <div style="color:#fbbf24;font-size:12px;">💰 ${perk.cost} очков престижа</div>
+                    <div style="color:#fbbf24;font-size:12px;">${ICONS.coin} ${perk.cost} очков престижа</div>
                 </div>
                 <button class="perk-btn" data-id="${key}" ${isUnlocked || !canAfford ? 'disabled' : ''}
                     style="background:${isUnlocked ? '#2d1b1b' : '#3d2b1f'};border:2px solid ${isUnlocked ? '#a855f7' : '#8b7355'};color:${isUnlocked ? '#a855f7' : '#d4c5a0'};padding:8px 20px;border-radius:8px;cursor:${!isUnlocked && canAfford ? 'pointer' : 'not-allowed'};opacity:${isUnlocked || !canAfford ? 0.5 : 1};">
-                    ${isUnlocked ? '✅ АКТИВЕН' : canAfford ? '🔓 КУПИТЬ' : '🔒 НЕТ ОЧКОВ'}
+                    ${isUnlocked ? `${ICONS.check} АКТИВЕН` : canAfford ? `${ICONS.unlock} КУПИТЬ` : `${ICONS.lock} НЕТ ОЧКОВ`}
                 </button>
             </div>`;
     }

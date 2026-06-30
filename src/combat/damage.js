@@ -54,7 +54,7 @@ export const computeDamage = () => {
         }
         dmg *= critMult;
         S.crits++;
-        EventBus.emit('log:add', { msg: `💥 КРИТ! x${critMult.toFixed(1)}`, cls: 'log-damage' });
+        EventBus.emit('log:add', { msg: `[Crit] КРИТ! x${critMult.toFixed(1)}`, cls: 'log-damage' });
     }
 
     dmg = Math.floor(dmg);

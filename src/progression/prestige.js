@@ -16,7 +16,7 @@ export const performPrestige = () => {
     const gained = potential - S.prestigePoints;
     const newMultiplier = 1 + Math.log1p(S.totalPrestigePoints + gained) * 0.12;
 
-    if (confirm(`🌟 ПРЕСТИЖ!\n\nВы получите ${gained} очков престижа.\nПостоянный множитель станет x${Math.min(newMultiplier, CONFIG.limits.maxPrestigeMultiplier).toFixed(2)}\n\nВСЁ будет сброшено!\n\nПродолжить?`)) {
+    if (confirm(`[Prestige] ПРЕСТИЖ!\n\nВы получите ${gained} очков престижа.\nПостоянный множитель станет x${Math.min(newMultiplier, CONFIG.limits.maxPrestigeMultiplier).toFixed(2)}\n\nВСЁ будет сброшено!\n\nПродолжить?`)) {
         S.prestigePoints += gained;
         S.totalPrestigePoints += gained;
         S.permanentMultiplier = Math.min(newMultiplier, CONFIG.limits.maxPrestigeMultiplier);
@@ -27,7 +27,7 @@ export const performPrestige = () => {
         updateUI();
         saveGame();
         addToLeaderboard();
-        EventBus.emit('log:add', { msg: `🌟 ПРЕСТИЖ! +${gained} очков! x${S.permanentMultiplier.toFixed(2)}`, cls: 'log-boss' });
+        EventBus.emit('log:add', { msg: `[Prestige] ПРЕСТИЖ! +${gained} очков! x${S.permanentMultiplier.toFixed(2)}`, cls: 'log-boss' });
         EventBus.emit('prestige:done');
     }
 };

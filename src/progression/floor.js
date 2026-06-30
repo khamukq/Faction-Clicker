@@ -40,7 +40,7 @@ export const spawnSuperBoss = () => {
         isBoss: true,
         isSuperBoss: true
     };
-    EventBus.emit('log:add', { msg: `👾 СУПЕР-БОСС ЭТАЖА ${S.floor}! ${sb.emoji} ${sb.name}`, cls: 'log-super' });
+    EventBus.emit('log:add', { msg: `[SB] СУПЕР-БОСС ЭТАЖА ${S.floor}! ${sb.name}`, cls: 'log-super' });
     EventBus.emit('enemy:spawned', stats);
     EventBus.emit('superBoss:indicator');
 };
@@ -54,7 +54,7 @@ export const spawnEnemy = () => {
         S.isBoss = true;
         S.bossCount = S.floor;
         S.bossAttempts = 0;
-        EventBus.emit('log:add', { msg: `👾 БОСС этажа ${S.floor}!`, cls: 'log-boss' });
+        EventBus.emit('log:add', { msg: `[Boss] БОСС этажа ${S.floor}!`, cls: 'log-boss' });
     } else if (!S.isBoss && !S.isSuperBoss) {
         S.enemyIndex = S.floorKills % ENEMIES.length;
     }

@@ -20,8 +20,8 @@ export const handleEnemyKill = (enemyStats) => {
     if (enemyRect) {
         const x = enemyRect.left + enemyRect.width / 2 - 30;
         const y = enemyRect.top - 10;
-        showFloatingText(x, y, `+${goldReward}💰`, 'gold');
-        showFloatingText(x, y + 35, `+${expReward}⚡`, 'exp');
+        showFloatingText(x, y, `+${goldReward}G`, 'gold');
+        showFloatingText(x, y + 35, `+${expReward}XP`, 'exp');
     }
 
     S.kills++;
@@ -30,13 +30,13 @@ export const handleEnemyKill = (enemyStats) => {
     if (S.combo > S.maxCombo) S.maxCombo = S.combo;
 
     S.hp = Math.min(S.hp + S.maxHp * 0.5, S.maxHp);
-    EventBus.emit('log:add', { msg: `💚 HP восстановлено до ${Math.floor(S.hp)}`, cls: 'log-heal' });
+    EventBus.emit('log:add', { msg: `[Heal] HP восстановлено до ${Math.floor(S.hp)}`, cls: 'log-heal' });
 
     if (S.isBoss) {
         S.totalBossDefeated++;
         if (S.isSuperBoss) {
             EventBus.emit('log:add', {
-                msg: `👾 СУПЕР-БОСС ${enemyStats.name} ПОВЕРЖЕН! +${goldReward}💰 +${expReward}⚡`,
+                msg: `[SB] СУПЕР-БОСС ${enemyStats.name} ПОВЕРЖЕН! +${goldReward}G +${expReward}XP`,
                 cls: 'log-super'
             });
             S.superBossCount++;
@@ -45,11 +45,11 @@ export const handleEnemyKill = (enemyStats) => {
             S.gold += bonusGold;
             S.totalGold += bonusGold;
             addExp(bonusExp);
-            EventBus.emit('log:add', { msg: `🎁 БОНУС ЗА СУПЕР-БОССА: +${bonusGold}💰 +${bonusExp}⚡`, cls: 'log-gold' });
+            EventBus.emit('log:add', { msg: `[Bonus] БОНУС ЗА СУПЕР-БОССА: +${bonusGold}G +${bonusExp}XP`, cls: 'log-gold' });
             EventBus.emit('superBoss:defeated');
         } else {
             EventBus.emit('log:add', {
-                msg: `👾 БОСС ${enemyStats.name} ПОВЕРЖЕН! +${goldReward}💰 +${expReward}⚡`,
+                msg: `[Boss] ${enemyStats.name} ПОВЕРЖЕН! +${goldReward}G +${expReward}XP`,
                 cls: 'log-boss'
             });
         }
@@ -59,7 +59,7 @@ export const handleEnemyKill = (enemyStats) => {
         S.bossAttempts = 0;
     } else {
         EventBus.emit('log:add', {
-            msg: `💀 Убит ${enemyStats.name}! +${goldReward}💰 +${expReward}⚡`,
+            msg: `[Kill] ${enemyStats.name}! +${goldReward}G +${expReward}XP`,
             cls: 'log-kill'
         });
     }

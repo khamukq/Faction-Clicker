@@ -24,13 +24,13 @@ export const enemyAttack = () => {
     const defense = S.b.defense || 0;
     damage = Math.max(1, damage - defense * 0.5);
     S.hp -= Math.floor(damage);
-    EventBus.emit('log:add', { msg: `💢 Враг нанёс ${Math.floor(damage)} урона!`, cls: 'log-damage' });
+    EventBus.emit('log:add', { msg: `[Dmg] Враг нанёс ${Math.floor(damage)} урона!`, cls: 'log-damage' });
     EventBus.emit('player:hpChanged');
 };
 
 export const attack = () => {
     if (!S.f) {
-        EventBus.emit('log:add', { msg: '❌ Сначала выбери фракцию!', cls: 'log-damage' });
+        EventBus.emit('log:add', { msg: '[X] Сначала выбери фракцию!', cls: 'log-damage' });
         return false;
     }
 
@@ -42,7 +42,7 @@ export const attack = () => {
     playHitAnimation();
 
     S.enemyHp -= actualDamage;
-    EventBus.emit('log:add', { msg: `⚔️ Удар на ${actualDamage} урона`, cls: 'log-damage' });
+    EventBus.emit('log:add', { msg: `[Hit] Удар на ${actualDamage} урона`, cls: 'log-damage' });
     EventBus.emit('enemy:hpChanged');
 
     const enemyContainer = document.getElementById('enemyContainer');
@@ -63,11 +63,11 @@ export const attack = () => {
                 S.bossAttempts++;
                 S.hp = S.maxHp;
                 EventBus.emit('log:add', {
-                    msg: `💀 ВЫ УМЕРЛИ ОТ ${S.isSuperBoss ? 'СУПЕР-БОССА' : 'БОССА'}! Попытка ${S.bossAttempts}/${S.bossMaxAttempts}`,
+                    msg: `[Death] ВЫ УМЕРЛИ ОТ ${S.isSuperBoss ? 'СУПЕР-БОССА' : 'БОССА'}! Попытка ${S.bossAttempts}/${S.bossMaxAttempts}`,
                     cls: 'log-boss'
                 });
                 if (S.bossAttempts >= S.bossMaxAttempts) {
-                    EventBus.emit('log:add', { msg: `🏳️ ${S.bossMaxAttempts} ПОРАЖЕНИЯ! Возврат к обычным врагам`, cls: 'log-boss' });
+                    EventBus.emit('log:add', { msg: `[Surr] ${S.bossMaxAttempts} ПОРАЖЕНИЯ! Возврат к обычным врагам`, cls: 'log-boss' });
                     S.isBoss = false;
                     S.isSuperBoss = false;
                     S.bossSkipped = true;
@@ -84,7 +84,7 @@ export const attack = () => {
                 }
             } else {
                 S.hp = 0;
-                EventBus.emit('log:add', { msg: '💀 ВЫ УМЕРЛИ! Возрождение...', cls: 'log-boss' });
+                EventBus.emit('log:add', { msg: '[Death] ВЫ УМЕРЛИ! Возрождение...', cls: 'log-boss' });
                 S.hp = S.maxHp;
                 spawnEnemy();
             }
@@ -105,12 +105,12 @@ export const attack = () => {
 
 export const skipBoss = () => {
     if (!S.isBoss) {
-        EventBus.emit('log:add', { msg: '❌ Сейчас нет босса!', cls: 'log-damage' });
+        EventBus.emit('log:add', { msg: '[X] Сейчас нет босса!', cls: 'log-damage' });
         return false;
     }
 
     const label = S.isSuperBoss ? 'супер-босса' : 'босса';
-    if (!confirm(`👾 Пропустить ${label}?\n\nЭтаж будет завершён без награды за босса.`)) {
+    if (!confirm(`[Boss] Пропустить ${label}?\n\nЭтаж будет завершён без награды за босса.`)) {
         return false;
     }
 
@@ -126,7 +126,7 @@ export const skipBoss = () => {
     }
 
     updateFloor();
-    EventBus.emit('log:add', { msg: `⏭️ Босс пропущен. Добро пожаловать на этаж ${S.floor}!`, cls: 'log-boss' });
+    EventBus.emit('log:add', { msg: `[Skip] Босс пропущен. Добро пожаловать на этаж ${S.floor}!`, cls: 'log-boss' });
     spawnEnemy();
     saveGame();
     EventBus.emit('boss:skipped');

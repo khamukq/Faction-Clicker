@@ -4,6 +4,7 @@ import { CONFIG } from '../core/config.js';
 import { computeEffectiveDamage, computeIncome } from '../combat/damage.js';
 import { getEnemyStats } from '../combat/enemies.js';
 import { getLevelBonuses } from '../progression/level.js';
+import { ICONS } from '../core/icons.js';
 
 export const updateHealthUI = () => {
     const hpPct = Math.max(0, (S.hp / S.maxHp) * 100);
@@ -56,7 +57,7 @@ export const updateSuperBossIndicator = () => {
 export const updateEnemyUI = (stats) => {
     if (!stats) return;
 
-    const prefix = stats.isSuperBoss ? '👾 СУПЕР-БОСС: ' : stats.isBoss ? '👾 БОСС: ' : '';
+    const prefix = stats.isSuperBoss ? '[SB] СУПЕР-БОСС: ' : stats.isBoss ? '[Boss] БОСС: ' : '';
     const nameEl = $('enemyName');
     if (nameEl) nameEl.textContent = prefix + stats.name;
 
@@ -65,7 +66,7 @@ export const updateEnemyUI = (stats) => {
 
     const enemyEl = $('enemy');
     if (enemyEl) {
-        enemyEl.textContent = stats.emoji || '👾';
+        enemyEl.innerHTML = stats.iconSvg || '?';
         enemyEl.classList.remove('enemy-appear');
         void enemyEl.offsetWidth;
         enemyEl.classList.add('enemy-appear');
@@ -94,7 +95,7 @@ export const updateBossUI = () => {
 
     if (S.isBoss) {
         container.classList.add('active');
-        const label = S.isSuperBoss ? '👾 СУПЕР-БОСС' : '👾 БОСС';
+        const label = S.isSuperBoss ? '[SB] СУПЕР-БОСС' : '[Boss] БОСС';
         const attempts = S.bossAttempts > 0
             ? ` · попыток ${S.bossAttempts}/${S.bossMaxAttempts}`
             : '';
@@ -102,7 +103,7 @@ export const updateBossUI = () => {
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
                 <span style="color:#f472b6;font-weight:700;">${label} этажа ${S.floor}${attempts}</span>
                 <button type="button" id="skipBossBtn" style="background:#2a1f18;border:1px solid #f5c842;color:#f5c842;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:600;">
-                    ⏭️ Пропустить
+                    ${ICONS.skip} Пропустить
                 </button>
             </div>`;
         const skipBtn = $('skipBossBtn');

@@ -68,7 +68,7 @@ const togglePasswordVisibility = (toggleEl) => {
     if (!input) return;
     const isPassword = input.type === 'password';
     input.type = isPassword ? 'text' : 'password';
-    toggleEl.textContent = isPassword ? '👁‍🗨' : '👁';
+    toggleEl.textContent = isPassword ? '[O]' : '[_]';
 };
 
 const setupAuthHandlers = () => {
@@ -264,7 +264,7 @@ function startGame() {
     renderLeaderboard();
     renderAchievements();
     saveGame();
-    addBattleLog(`👋 Добро пожаловать, ${S.nickname}! Выбрана фракция: ${F[S.f]?.emoji} ${F[S.f]?.name}`, 'log-gold');
+    addBattleLog(`[Start] Добро пожаловать, ${S.nickname}! Фракция: ${F[S.f]?.name}`, 'log-gold');
 }
 
 function showFactionSelect(nickname) {
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('nicknameScreen').style.display = 'none';
                     enterGame();
                     renderFullUI();
-                    addBattleLog('☁️ Загружено из облака!', 'log-gold');
+                    addBattleLog('[Cloud] Загружено из облака!', 'log-gold');
                 } else if (fbLoaded && S.nickname && !S.f) {
                     document.getElementById('nicknameScreen').style.display = 'none';
                     showFactionSelect(S.nickname);
@@ -362,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('nicknameScreen').style.display = 'none';
                         enterGame();
                         renderFullUI();
-                        addBattleLog('💾 Загружено из кеша', 'log-gold');
+                        addBattleLog('[Cache] Загружено из кеша', 'log-gold');
                     } else if (localLoaded && S.nickname && !S.f) {
                         document.getElementById('nicknameScreen').style.display = 'none';
                         showFactionSelect(S.nickname);

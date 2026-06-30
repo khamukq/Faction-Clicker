@@ -1,31 +1,32 @@
 import { S } from '../core/state.js';
 import { CONFIG } from '../core/config.js';
+import { ICONS } from '../core/icons.js';
 
 export const ENEMIES = [
-    { name: 'Гоблин', emoji: '👹', hp: 40, damage: 2, armor: 0, gold: 15, exp: 3 },
-    { name: 'Орк', emoji: '👺', hp: 80, damage: 2, armor: 1, gold: 15, exp: 5 },
-    { name: 'Тролль', emoji: '🧌', hp: 150, damage: 2, armor: 2, gold: 30, exp: 10 },
-    { name: 'Рыцарь', emoji: '⚔️', hp: 250, damage: 7, armor: 3, gold: 54, exp: 18 },
-    { name: 'Демон', emoji: '👿', hp: 400, damage: 12, armor: 5, gold: 90, exp: 28 }
+    { name: 'Гоблин', emoji: 'G', iconSvg: ICONS.goblin, hp: 40, damage: 2, armor: 0, gold: 15, exp: 3 },
+    { name: 'Орк', emoji: 'O', iconSvg: ICONS.orc, hp: 80, damage: 2, armor: 1, gold: 15, exp: 5 },
+    { name: 'Тролль', emoji: 'T', iconSvg: ICONS.troll, hp: 150, damage: 2, armor: 2, gold: 30, exp: 10 },
+    { name: 'Рыцарь', emoji: '[K]', iconSvg: ICONS.knight_face, hp: 250, damage: 7, armor: 3, gold: 54, exp: 18 },
+    { name: 'Демон', emoji: '[D]', iconSvg: ICONS.demon, hp: 400, damage: 12, armor: 5, gold: 90, exp: 28 }
 ];
 
 export const BOSSES = [
-    { name: 'Гоблин-вожак', emoji: '👹', hp: 150, damage: 5, armor: 1, gold: 25, exp: 20 },
-    { name: 'Орк-командир', emoji: '👺', hp: 300, damage: 10, armor: 2, gold: 50, exp: 40 },
-    { name: 'Тролль-старейшина', emoji: '🧌', hp: 500, damage: 15, armor: 3, gold: 100, exp: 70 },
-    { name: 'Рыцарь-теней', emoji: '⚔️', hp: 800, damage: 20, armor: 5, gold: 150, exp: 100 },
-    { name: 'Демон-инквизитор', emoji: '👿', hp: 1200, damage: 28, armor: 7, gold: 250, exp: 150 },
-    { name: 'Король демонов', emoji: '👾', hp: 2000, damage: 40, armor: 12, gold: 400, exp: 250 },
-    { name: 'Древний дракон', emoji: '🐉', hp: 3500, damage: 55, armor: 18, gold: 600, exp: 350 },
-    { name: 'Повелитель тьмы', emoji: '💀', hp: 5000, damage: 70, armor: 25, gold: 900, exp: 500 }
+    { name: 'Гоблин-вожак', emoji: 'G!', iconSvg: ICONS.goblin, hp: 150, damage: 5, armor: 1, gold: 25, exp: 20 },
+    { name: 'Орк-командир', emoji: 'O!', iconSvg: ICONS.orc, hp: 300, damage: 10, armor: 2, gold: 50, exp: 40 },
+    { name: 'Тролль-старейшина', emoji: 'T!', iconSvg: ICONS.troll, hp: 500, damage: 15, armor: 3, gold: 100, exp: 70 },
+    { name: 'Рыцарь-теней', emoji: '[K!]', iconSvg: ICONS.knight_face, hp: 800, damage: 20, armor: 5, gold: 150, exp: 100 },
+    { name: 'Демон-инквизитор', emoji: '[D!]', iconSvg: ICONS.demon, hp: 1200, damage: 28, armor: 7, gold: 250, exp: 150 },
+    { name: 'Король демонов', emoji: '[M]', iconSvg: ICONS.monster, hp: 2000, damage: 40, armor: 12, gold: 400, exp: 250 },
+    { name: 'Древний дракон', emoji: '[Dr]', iconSvg: ICONS.dragon, hp: 3500, damage: 55, armor: 18, gold: 600, exp: 350 },
+    { name: 'Повелитель тьмы', emoji: '[Sk]', iconSvg: ICONS.skull, hp: 5000, damage: 70, armor: 25, gold: 900, exp: 500 }
 ];
 
 export const SUPER_BOSSES = [
-    { name: 'Хранитель этажа 500', emoji: '👾', hp: 10000, damage: 100, armor: 20, gold: 5000, exp: 2000 },
-    { name: 'Повелитель 1000', emoji: '👾', hp: 50000, damage: 250, armor: 40, gold: 20000, exp: 8000 },
-    { name: 'Император 1500', emoji: '👾', hp: 200000, damage: 500, armor: 80, gold: 80000, exp: 30000 },
-    { name: 'Король 2000', emoji: '👾', hp: 1000000, damage: 1000, armor: 150, gold: 300000, exp: 120000 },
-    { name: 'Бог 2500', emoji: '👾', hp: 5000000, damage: 2500, armor: 300, gold: 1000000, exp: 500000 }
+    { name: 'Хранитель этажа 500', emoji: '[SB]', iconSvg: ICONS.superboss, hp: 10000, damage: 100, armor: 20, gold: 5000, exp: 2000 },
+    { name: 'Повелитель 1000', emoji: '[SB]', iconSvg: ICONS.superboss, hp: 50000, damage: 250, armor: 40, gold: 20000, exp: 8000 },
+    { name: 'Император 1500', emoji: '[SB]', iconSvg: ICONS.superboss, hp: 200000, damage: 500, armor: 80, gold: 80000, exp: 30000 },
+    { name: 'Король 2000', emoji: '[SB]', iconSvg: ICONS.superboss, hp: 1000000, damage: 1000, armor: 150, gold: 300000, exp: 120000 },
+    { name: 'Бог 2500', emoji: '[SB]', iconSvg: ICONS.superboss, hp: 5000000, damage: 2500, armor: 300, gold: 1000000, exp: 500000 }
 ];
 
 /** Линейный рост HP — предсказуемый и сбалансированный */
@@ -64,6 +65,7 @@ export const getEnemyStats = () => {
         return {
             name: `${sb.name} (Супер-босс ${S.floor} этажа)`,
             emoji: sb.emoji,
+            iconSvg: sb.iconSvg,
             hp: Math.floor(sb.hp * floorMult * CONFIG.floors.superBossMultiplier),
             damage: Math.floor(sb.damage * floorMult * CONFIG.floors.superBossMultiplier * 0.5),
             armor: sb.armor || 20,
@@ -84,6 +86,7 @@ export const getEnemyStats = () => {
         return {
             name: `${boss.name} (этаж ${S.floor})`,
             emoji: boss.emoji,
+            iconSvg: boss.iconSvg,
             hp: Math.floor(boss.hp * scale * CONFIG.difficulty.bossHealthMult),
             damage: Math.floor(boss.damage * scale * CONFIG.difficulty.bossDamageMult),
             armor: boss.armor || 1,
@@ -104,6 +107,7 @@ export const getEnemyStats = () => {
     return {
         name: enemy.name,
         emoji: enemy.emoji,
+        iconSvg: enemy.iconSvg,
         hp: scaledHp,
         damage: scaledDamage,
         armor: enemy.armor || 0,

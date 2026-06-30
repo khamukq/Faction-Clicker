@@ -19,7 +19,7 @@ export const checkLevelMilestones = () => {
     if (milestone && !S.levelMilestones.includes(S.level)) {
         S.levelMilestones.push(S.level);
         S.gold += milestone.gold;
-        EventBus.emit('log:add', { msg: `🏆 ВЕХА: ${milestone.desc}! +${milestone.gold}💰`, cls: 'log-boss' });
+        EventBus.emit('log:add', { msg: `[Milestone] ${milestone.desc}! +${milestone.gold}G`, cls: 'log-boss' });
         return true;
     }
     return false;
@@ -47,7 +47,7 @@ export const levelUp = () => {
         S.hp = S.maxHp;
 
         checkLevelMilestones();
-        EventBus.emit('log:add', { msg: `⬆ УРОВЕНЬ ${S.level}!`, cls: 'log-gold' });
+        EventBus.emit('log:add', { msg: `[Lvl] УРОВЕНЬ ${S.level}!`, cls: 'log-gold' });
         EventBus.emit('player:levelUp');
     }
 };

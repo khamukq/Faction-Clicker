@@ -71,12 +71,12 @@ const btn = document.getElementById('setNicknameBtn');
 
 const validate = (name) => {
 if (!name || name.length < 2 || name.length > 20) {
-error.textContent = '❌ Никнейм должен быть 2-20 символов';
+error.textContent = '[X] Никнейм должен быть 2-20 символов';
 error.style.display = 'block';
 return false;
 }
 if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-error.textContent = '❌ Только буквы, цифры и _';
+error.textContent = '[X] Только буквы, цифры и _';
 error.style.display = 'block';
 return false;
 }
