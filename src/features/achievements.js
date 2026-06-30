@@ -28,10 +28,7 @@ export const checkAchievements = () => {
                 rewardText = `+${ach.reward.gold} золота`;
             }
             if (ach.reward.prestigeBonus) {
-                S.permanentMultiplier = Math.min(
-                    S.permanentMultiplier + ach.reward.prestigeBonus,
-                    CONFIG.limits.maxPrestigeMultiplier
-                );
+                S.permanentMultiplier += ach.reward.prestigeBonus;
                 rewardText = `+${ach.reward.prestigeBonus*100}% к множителю`;
             }
             if (ach.reward.ascensionBonus) {

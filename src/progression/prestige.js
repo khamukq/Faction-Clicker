@@ -14,12 +14,12 @@ export const performPrestige = () => {
     if (S.totalGold < 100000 || potential <= S.prestigePoints) return;
 
     const gained = potential - S.prestigePoints;
-    const newMultiplier = 1 + Math.log1p(S.totalPrestigePoints + gained) * 0.12;
+    const newMultiplier = 1 + Math.log10(1 + (S.totalPrestigePoints + gained) * 0.2);
 
-    if (confirm(`[Prestige] ПРЕСТИЖ!\n\nВы получите ${gained} очков престижа.\nПостоянный множитель станет x${Math.min(newMultiplier, CONFIG.limits.maxPrestigeMultiplier).toFixed(2)}\n\nВСЁ будет сброшено!\n\nПродолжить?`)) {
+    if (confirm(`[Prestige] ПРЕСТИЖ!\n\nВы получите ${gained} очков престижа.\nПостоянный множитель станет x${newMultiplier.toFixed(2)}\n\nВСЁ будет сброшено!\n\nПродолжить?`)) {
         S.prestigePoints += gained;
         S.totalPrestigePoints += gained;
-        S.permanentMultiplier = Math.min(newMultiplier, CONFIG.limits.maxPrestigeMultiplier);
+        S.permanentMultiplier = newMultiplier;
 
         resetGame();
         spawnEnemy();

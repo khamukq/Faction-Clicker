@@ -2,12 +2,9 @@ export const CONFIG = {
 VERSION: 12,
 prestigeFormula: (totalGold) => {
     if (totalGold < 100000) return 0;
-    let p = Math.log1p(totalGold / 50000);
-    p = Math.pow(p, 1.2);
-    return Math.floor(p);
+    return Math.max(1, Math.floor(Math.log10(totalGold / 100000) * 50));
 },
 limits: {
-maxPrestigeMultiplier: 3.0,
 maxIncome: 200000,
 maxCritChance: 0.7,
 maxDamage: Infinity,
@@ -21,8 +18,8 @@ enemyExpMult: 1.0,
 hpGrowth: 0.12,
 rewardGrowth: 0.08,
 armorReduction: 0.15,
-upgradeBaseMult: 1.35,
-hireBaseMult: 1.2,
+upgradeBaseMult: 1.12,
+hireBaseMult: 1.07,
 comboDecaySeconds: 3,
 bossInterval: 25,
 offlineMaxSeconds: 3600,
@@ -46,7 +43,6 @@ speedPerLevel: 50
 levelSystem: {
 expFormula: (level) => Math.floor(50 * Math.pow(1.25, level - 1)),
 bonuses: {
-damagePerLevel: 1.5,
 hpPerLevel: 8,
 healPerLevel: 0.2,
 goldPerLevel: 0.5
@@ -65,8 +61,8 @@ floors: {
 enemiesPerFloor: 10,
 superBossInterval: 500,
 superBossMultiplier: 10,
-superBossGoldMult: 20,
-superBossExpMult: 15,
+superBossGoldMult: 100,
+superBossExpMult: 100,
 floorBonus: 1.1
 }
 };

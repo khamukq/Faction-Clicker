@@ -29,11 +29,10 @@ export const SUPER_BOSSES = [
     { name: 'Бог 2500', emoji: '[SB]', iconSvg: ICONS.superboss, hp: 5000000, damage: 2500, armor: 300, gold: 1000000, exp: 500000 }
 ];
 
-/** Линейный рост HP — предсказуемый и сбалансированный */
+/** Экспоненциальный рост HP — ×1.15 за уровень (как в Clicker Heroes) */
 export const enemyScale = (base, lvl) => {
-    const growth = CONFIG.difficulty.hpGrowth;
-    const value = base * (1 + (Math.max(1, lvl) - 1) * growth);
-    return Math.min(Math.floor(value), CONFIG.limits.maxEnemyHp);
+    const value = base * Math.pow(1.15, Math.max(0, lvl - 1));
+    return Math.floor(value);
 };
 
 export const getEnemy = () => {
@@ -100,9 +99,9 @@ export const getEnemyStats = () => {
 
     const scaledHp = enemyScale(enemy.hp, lvl);
     const scaledDamage = Math.max(1, Math.floor(enemy.damage * (1 + (lvl - 1) * 0.04)));
-    const rewardMult = 1 + (lvl - 1) * CONFIG.difficulty.rewardGrowth;
-    const scaledGold = Math.floor(enemy.gold * rewardMult * CONFIG.difficulty.enemyGoldMult);
-    const scaledExp = Math.floor(enemy.exp * rewardMult * CONFIG.difficulty.enemyExpMult);
+    // награда пропорциональна HP врага — как в Clicker Heroes
+    const scaledGold = Math.max(1, Math.floor(scaledHp * 0.1 * CONFIG.difficulty.enemyGoldMult));
+    const scaledExp = Math.max(1, Math.floor(scaledHp * 0.02 * CONFIG.difficulty.enemyExpMult));
 
     return {
         name: enemy.name,

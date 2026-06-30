@@ -7,7 +7,7 @@ export const getExpForLevel = (level) => CONFIG.levelSystem.expFormula(level);
 export const getLevelBonuses = (level) => {
     const bonuses = CONFIG.levelSystem.bonuses;
     return {
-        damage: level * bonuses.damagePerLevel,
+        damage: 0,  // заменено на процентный множитель в damage.js
         hp: level * bonuses.hpPerLevel,
         heal: level * bonuses.healPerLevel,
         gold: level * bonuses.goldPerLevel

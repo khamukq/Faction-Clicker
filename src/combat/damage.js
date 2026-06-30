@@ -8,23 +8,22 @@ const computeRawDamage = () => {
     const lvl = S.level;
     const faction = getF();
 
-    let base = 4 + lvl * 0.8;
-    let levelBonus = S.levelStats.damageBonus || 0;
+    let base = 4;
+    let levelMult = Math.pow(1.15, lvl);       // +15% урона за уровень
     let armyBase = (S.a || 0) * 2;
     let armyBonus = (S.a || 0) * (S.b.armyDamage || 0);
     let totalArmyDamage = armyBase + armyBonus;
     let bonusDamage = S.b.damage || 0;
     let factionMult = faction?.multiplier || 1;
 
-    let prestigeMult = 1 + Math.log10(1 + S.prestigePoints) * 0.15;
-    prestigeMult = Math.min(prestigeMult, CONFIG.limits.maxPrestigeMultiplier);
+    let prestigeMult = 1 + Math.log10(1 + S.prestigePoints * 0.2);
 
     let ascensionMult = 1 + S.ascension * 0.1;
 
     let weaponDamage = getTotalWeaponDamage(S) * (1 + getSynergyBonus(S));
     let weaponCount = getWeaponCount(S);
 
-    let dmg = (base + levelBonus + totalArmyDamage + bonusDamage + weaponDamage) * factionMult * prestigeMult * ascensionMult;
+    let dmg = (base + totalArmyDamage + bonusDamage + weaponDamage) * levelMult * factionMult * prestigeMult * ascensionMult;
 
     if (S.b.factionBonus?.imperial_order?.active) {
         dmg *= S.b.factionBonus.imperial_order.damageMult;
