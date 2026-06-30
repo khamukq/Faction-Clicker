@@ -94,7 +94,7 @@ export const renderUpgrades = () => {
         const nextEffect = getNextEffect(u);
         return `<div class="upgrade-card">
             <div class="upgrade-info">
-                <div class="upgrade-name">${u.icon} ${u.name}</div>
+                <div class="upgrade-name">${u.iconSvg || u.icon} ${u.name}</div>
                 <div class="upgrade-desc">${u.desc}</div>
                 <div class="upgrade-level">Уровень: ${lv}</div>
                 <div style="color:#8a7a6a;font-size:12px;margin-top:4px;">След. уровень: ${nextEffect}</div>

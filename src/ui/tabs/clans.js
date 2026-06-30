@@ -1,11 +1,12 @@
 import { S } from '../../core/state.js';
 import { $, fmt } from '../../core/utils.js';
-import { getClans, createClan, joinClan, upgradeClan } from '../../features/clan.js';
+import { getClans, createClan, joinClan, upgradeClan, syncClansFromFirebase } from '../../features/clan.js';
 
-export const renderClans = () => {
+export const renderClans = async () => {
     const c = $('clansContainer');
     if (!c) return;
 
+    await syncClansFromFirebase();
     const clans = getClans();
     const userClan = S.clan ? clans.find(cl => cl.id === S.clan) : null;
 

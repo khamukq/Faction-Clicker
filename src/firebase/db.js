@@ -63,6 +63,24 @@ export const saveLeaderboardToFirebase = async (entry) => {
     }
 };
 
+export const saveClansToFirebase = async (clans) => {
+    try {
+        await setDoc(doc(db, 'clans', 'registry'), { clans, updatedAt: Date.now() });
+    } catch (e) {
+        console.warn('Clans Firebase save failed:', e);
+    }
+};
+
+export const loadClansFromFirebase = async () => {
+    try {
+        const snap = await getDoc(doc(db, 'clans', 'registry'));
+        return snap.exists() ? snap.data().clans : null;
+    } catch (e) {
+        console.warn('Clans Firebase load failed:', e);
+        return null;
+    }
+};
+
 export const loadLeaderboardFromFirebase = async () => {
     try {
         const q = query(getLeaderboardRef(), orderBy('prestige', 'desc'), limit(50));

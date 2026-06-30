@@ -1,8 +1,22 @@
 import { S } from '../core/state.js';
 import { EventBus } from '../core/eventBus.js';
 import { fmt } from '../core/utils.js';
+import { saveClansToFirebase, loadClansFromFirebase } from '../firebase/db.js';
 
 const CLAN_KEY = 'factionClans';
+
+let syncPending = false;
+
+export const syncClansFromFirebase = async () => {
+    try {
+        const fbClans = await loadClansFromFirebase();
+        if (fbClans && Array.isArray(fbClans) && fbClans.length > 0) {
+            saveClans(fbClans);
+        }
+    } catch (e) {
+        console.warn('Clans sync failed:', e);
+    }
+};
 
 export const getClans = () => {
     try {
@@ -14,6 +28,13 @@ export const getClans = () => {
 export const saveClans = (clans) => {
     try {
         localStorage.setItem(CLAN_KEY, JSON.stringify(clans));
+        if (!syncPending) {
+            syncPending = true;
+            setTimeout(() => {
+                syncPending = false;
+                saveClansToFirebase(getClans());
+            }, 1000);
+        }
     } catch (e) { console.warn('Clans save failed:', e); }
 };
 
