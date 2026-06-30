@@ -5,6 +5,7 @@ import { computeEffectiveDamage, computeIncome } from '../combat/damage.js';
 import { getEnemyStats } from '../combat/enemies.js';
 import { getLevelBonuses } from '../progression/level.js';
 import { ICONS } from '../core/icons.js';
+import { getCurrentWeapon, getWeaponDamage, getTotalWeaponDamage, getSynergyBonus, getWeaponCount } from '../upgrades/weapons.js';
 
 export const updateHealthUI = () => {
     const hpPct = Math.max(0, (S.hp / S.maxHp) * 100);
@@ -114,6 +115,22 @@ export const updateBossUI = () => {
     }
 };
 
+export const updateWeaponUI = () => {
+    const container = $('weaponDisplay');
+    if (!container) return;
+    if (!S.f) { container.style.display = 'none'; return; }
+    const wp = getCurrentWeapon(S);
+    const lvl = (S.weapons[wp.id]?.level) || 0;
+    const dmg = getWeaponDamage(S, wp.id);
+    const iconEl = $('weaponIcon');
+    const nameEl = $('weaponName');
+    const damageEl = $('weaponDamageDisplay');
+    if (iconEl) iconEl.textContent = wp.icon || '🗡️';
+    if (nameEl) nameEl.textContent = `${wp.name} [${wp.era}] ур.${lvl}`;
+    if (damageEl) damageEl.textContent = `${fmt(dmg)} урона от оружия`;
+    container.style.display = 'block';
+};
+
 export const updateUI = () => {
     const enemyStats = getEnemyStats();
     const totalDamage = computeEffectiveDamage(enemyStats);
@@ -163,4 +180,5 @@ export const updateUI = () => {
     updateFloorUI();
     updateSuperBossIndicator();
     updateBossUI();
+    updateWeaponUI();
 };
