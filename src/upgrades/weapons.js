@@ -202,21 +202,23 @@ export const WEAPONS = [
 ];
 
 const ERA_NAMES = [
-    'Деревянное', 'Каменное', 'Медное', 'Бронзовое', 'Железное',
-    'Стальное', 'Мифриловое', 'Адамантиновое', 'Орихалковое', 'Магическое',
-    'Легендарное', 'Мифическое', 'Божественное', 'Демоническое', 'Космическое',
-    'Галактическое', 'Астральное', 'Вселенское', 'Изначальное', 'Абсолютное'
+    'Деревянное', 'Стальное', 'Магическое', 'Божественное', 'Абсолютное'
 ];
 
 for (const wp of WEAPONS) {
     const t = wp.tier;
-    wp.eraIndex = Math.floor((t - 1) / 10);
-    wp.era = ERA_NAMES[wp.eraIndex] || '';
-    wp.baseDamage = Math.floor(2 + Math.pow(t, 1.7) / 8);
-    wp.damagePerLevel = +(wp.baseDamage * 0.12).toFixed(3);
-    wp.baseCost = Math.floor(10 + t * t / 4);
+    const eraIdx = Math.floor((t - 1) / 40);
+    const posInEra = (t - 1) % 40;
+    wp.eraIndex = eraIdx;
+    wp.era = ERA_NAMES[eraIdx] || '';
+    // damage: 100× per era — каждый шаг эпохи даёт ×100 урона
+    const dmgPow = Math.pow(100, eraIdx);
+    wp.baseDamage = Math.floor(10 * dmgPow + dmgPow * posInEra);
+    wp.damagePerLevel = +(wp.baseDamage * 0.1).toFixed(1);
+    // costs: tier‑формула без жёстких капов — работает для любого числа эпох
+    wp.baseCost = Math.floor(50 + Math.pow(t, 1.8));
     wp.costGrowth = 1.08;
-    wp.unlockCost = t === 1 ? 0 : Math.floor(5 * Math.pow(t, 2.2));
+    wp.unlockCost = t === 1 ? 0 : Math.floor(100 + Math.pow(t, 2.2));
     wp.maxLevel = 100;
 }
 
