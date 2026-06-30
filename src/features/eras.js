@@ -1,0 +1,22 @@
+export const ERAS = [
+    { id: 1, name: 'Деревянное', lvlMin: 1, lvlMax: 10, dmgMin: 1, dmgMax: 6 },
+    { id: 2, name: 'Каменное', lvlMin: 11, lvlMax: 20, dmgMin: 8, dmgMax: 20 },
+    { id: 3, name: 'Медное', lvlMin: 21, lvlMax: 30, dmgMin: 25, dmgMax: 50 },
+    { id: 4, name: 'Бронзовое', lvlMin: 31, lvlMax: 40, dmgMin: 60, dmgMax: 110 },
+    { id: 5, name: 'Железное', lvlMin: 41, lvlMax: 50, dmgMin: 150, dmgMax: 280 },
+    { id: 6, name: 'Стальное', lvlMin: 51, lvlMax: 60, dmgMin: 350, dmgMax: 650 },
+    { id: 7, name: 'Мифриловое', lvlMin: 61, lvlMax: 70, dmgMin: 800, dmgMax: 1400 },
+    { id: 8, name: 'Адамантиновое', lvlMin: 71, lvlMax: 80, dmgMin: 1800, dmgMax: 3200 },
+    { id: 9, name: 'Орихалковое', lvlMin: 81, lvlMax: 90, dmgMin: 4000, dmgMax: 7000 },
+    { id: 10, name: 'Магическое', lvlMin: 91, lvlMax: 100, dmgMin: 9000, dmgMax: 16000 },
+    { id: 11, name: 'Легендарное', lvlMin: 101, lvlMax: 110, dmgMin: 20000, dmgMax: 42000 },
+    { id: 12, name: 'Мифическое', lvlMin: 111, lvlMax: 120, dmgMin: 50000, dmgMax: 100000 },
+    { id: 13, name: 'Божественное', lvlMin: 121, lvlMax: 130, dmgMin: 120000, dmgMax: 220000 },
+    { id: 14, name: 'Демоническое', lvlMin: 131, lvlMax: 140, dmgMin: 250000, dmgMax: 550000 },
+    { id: 15, name: 'Космическое', lvlMin: 141, lvlMax: 150, dmgMin: 600000, dmgMax: 1100000 },
+    { id: 16, name: 'Галактическое', lvlMin: 151, lvlMax: 160, dmgMin: 1200000, dmgMax: 2200000 },
+    { id: 17, name: 'Астральное', lvlMin: 161, lvlMax: 170, dmgMin: 2500000, dmgMax: 5500000 },
+    { id: 18, name: 'Вселенское', lvlMin: 171, lvlMax: 180, dmgMin: 6000000, dmgMax: 11000000 },
+    { id: 19, name: 'Изначальное', lvlMin: 181, lvlMax: 190, dmgMin: 12000000, dmgMax: 28000000 },
+    { id: 20, name: 'Абсолютное', lvlMin: 191, lvlMax: 200, dmgMin: 30000000, dmgMax: 100000000 }
+];
