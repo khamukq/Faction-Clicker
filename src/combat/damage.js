@@ -5,31 +5,31 @@ import { EventBus } from '../core/eventBus.js';
 import { getTotalWeaponDamage, getSynergyBonus, getWeaponCount } from '../upgrades/weapons.js';
 
 const computeRawDamage = () => {
-    const lvl = S.level;
+    const lvl = S.player.level;
     const faction = getF();
+    const b = S.faction.bonuses;
 
     let base = 4;
-    let levelMult = Math.pow(1.15, lvl);       // +15% урона за уровень
-    let armyBase = (S.a || 0) * 2;
-    let armyBonus = (S.a || 0) * (S.b.armyDamage || 0);
+    let levelMult = Math.pow(1.15, lvl);
+    let armyBase = (S.player.a || 0) * 2;
+    let armyBonus = (S.player.a || 0) * (b.armyDamage || 0);
     let totalArmyDamage = armyBase + armyBonus;
-    let bonusDamage = S.b.damage || 0;
+    let bonusDamage = b.damage || 0;
     let factionMult = faction?.multiplier || 1;
 
-    let prestigeMult = 1 + Math.log10(1 + S.prestigePoints * 0.2);
+    let prestigeMult = 1 + Math.log10(1 + S.meta.prestigePoints * 0.2);
 
-    let ascensionMult = 1 + S.ascension * 0.1;
+    let ascensionMult = 1 + S.meta.ascension * 0.1;
 
     let weaponDamage = getTotalWeaponDamage(S) * (1 + getSynergyBonus(S));
-    let weaponCount = getWeaponCount(S);
 
     let dmg = (base + totalArmyDamage + bonusDamage + weaponDamage) * levelMult * factionMult * prestigeMult * ascensionMult;
 
-    if (S.b.factionBonus?.imperial_order?.active) {
-        dmg *= S.b.factionBonus.imperial_order.damageMult;
+    if (b.factionBonus?.imperial_order?.active) {
+        dmg *= b.factionBonus.imperial_order.damageMult;
     }
 
-    dmg *= (1 + Math.min(S.combo * 0.002, 0.15));
+    dmg *= (1 + Math.min(S.combat.combo * 0.002, 0.15));
     return dmg;
 };
 
@@ -49,14 +49,15 @@ export const computeEffectiveDamage = (enemyStats) => {
 export const computeDamage = () => {
     let dmg = computeRawDamage();
 
-    const critChance = Math.min(S.b.critChance, CONFIG.limits.maxCritChance);
+    const b = S.faction.bonuses;
+    const critChance = Math.min(b.critChance, CONFIG.limits.maxCritChance);
     if (RNG.chance(critChance)) {
-        let critMult = S.b.critMultiplier || 1.5;
-        if (S.b.factionBonus?.dark_ritual?.active) {
-            critMult *= S.b.factionBonus.dark_ritual.critMult;
+        let critMult = b.critMultiplier || 1.5;
+        if (b.factionBonus?.dark_ritual?.active) {
+            critMult *= b.factionBonus.dark_ritual.critMult;
         }
         dmg *= critMult;
-        S.crits++;
+        S.player.crits++;
         EventBus.emit('log:add', { msg: `[Crit] КРИТ! x${critMult.toFixed(1)}`, cls: 'log-damage' });
     }
 
@@ -67,16 +68,17 @@ export const computeDamage = () => {
 };
 
 export const computeIncome = () => {
-    const lvl = S.level;
+    const lvl = S.player.level;
     const faction = getF();
+    const b = S.faction.bonuses;
 
-    let levelBonus = S.levelStats.goldBonus || 0;
-    let income = (S.b.passive || 0) + (S.b.gold || 0) + levelBonus + (S.a || 0) * (S.b.armyPassive || 0);
+    let levelBonus = S.player.levelStats.goldBonus || 0;
+    let income = (b.passive || 0) + (b.gold || 0) + levelBonus + (S.player.a || 0) * (b.armyPassive || 0);
     income *= (1 + Math.log10(1 + lvl) * 0.15);
-    income *= (1 + Math.log10(1 + S.prestigePoints) * 0.2);
+    income *= (1 + Math.log10(1 + S.meta.prestigePoints) * 0.2);
     if (faction) income *= faction.multiplier;
-    income *= (1 + S.ascension * 0.1);
-    if (S.b.boost) income *= S.b.boostMul || 2;
+    income *= (1 + S.meta.ascension * 0.1);
+    if (b.boost) income *= b.boostMul || 2;
 
     income = Math.floor(income);
     income = Math.min(income, CONFIG.limits.maxIncome);

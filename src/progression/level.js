@@ -15,10 +15,11 @@ export const getLevelBonuses = (level) => {
 };
 
 export const checkLevelMilestones = () => {
-    const milestone = CONFIG.levelSystem.milestones[S.level];
-    if (milestone && !S.levelMilestones.includes(S.level)) {
-        S.levelMilestones.push(S.level);
-        S.gold += milestone.gold;
+    const pl = S.player;
+    const milestone = CONFIG.levelSystem.milestones[pl.level];
+    if (milestone && !pl.levelMilestones.includes(pl.level)) {
+        pl.levelMilestones.push(pl.level);
+        pl.gold += milestone.gold;
         EventBus.emit('log:add', { msg: `[Milestone] ${milestone.desc}! +${milestone.gold}G`, cls: 'log-boss' });
         return true;
     }
@@ -26,28 +27,29 @@ export const checkLevelMilestones = () => {
 };
 
 export const addExp = (amount) => {
-    S.exp += amount;
+    S.player.exp += amount;
     levelUp();
 };
 
 export const levelUp = () => {
-    while (S.exp >= S.expToNext) {
-        S.exp -= S.expToNext;
-        S.level++;
-        S.totalExp += S.expToNext;
-        S.expToNext = getExpForLevel(S.level);
+    const pl = S.player;
+    while (pl.exp >= pl.expToNext) {
+        pl.exp -= pl.expToNext;
+        pl.level++;
+        pl.totalExp += pl.expToNext;
+        pl.expToNext = getExpForLevel(pl.level);
 
-        const bonuses = getLevelBonuses(S.level);
-        S.levelStats.damageBonus += bonuses.damage;
-        S.levelStats.hpBonus += bonuses.hp;
-        S.levelStats.healBonus += bonuses.heal;
-        S.levelStats.goldBonus += bonuses.gold;
+        const bonuses = getLevelBonuses(pl.level);
+        pl.levelStats.damageBonus += bonuses.damage;
+        pl.levelStats.hpBonus += bonuses.hp;
+        pl.levelStats.healBonus += bonuses.heal;
+        pl.levelStats.goldBonus += bonuses.gold;
 
-        S.maxHp += bonuses.hp;
-        S.hp = S.maxHp;
+        pl.maxHp += bonuses.hp;
+        pl.hp = pl.maxHp;
 
         checkLevelMilestones();
-        EventBus.emit('log:add', { msg: `[Lvl] УРОВЕНЬ ${S.level}!`, cls: 'log-gold' });
+        EventBus.emit('log:add', { msg: `[Lvl] УРОВЕНЬ ${pl.level}!`, cls: 'log-gold' });
         EventBus.emit('player:levelUp');
     }
 };

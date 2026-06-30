@@ -7,13 +7,17 @@ import { saveGame } from '../core/storage.js';
 import { showFloatingText } from '../ui/floatingText.js';
 
 export const handleEnemyKill = (enemyStats) => {
-    S.enemyHp = 0;
+    const c = S.combat;
+    const p = S.progression;
+    const pl = S.player;
+
+    c.enemyHp = 0;
 
     const goldReward = Math.floor(enemyStats.gold || 2);
     const expReward = Math.floor(enemyStats.exp || 3);
 
-    S.gold += goldReward;
-    S.totalGold += goldReward;
+    pl.gold += goldReward;
+    pl.totalGold += goldReward;
     addExp(expReward);
 
     const enemyRect = document.getElementById('enemyContainer')?.getBoundingClientRect();
@@ -24,26 +28,26 @@ export const handleEnemyKill = (enemyStats) => {
         showFloatingText(x, y + 35, `+${expReward}XP`, 'exp');
     }
 
-    S.kills++;
-    S.totalKills++;
-    S.combo++;
-    if (S.combo > S.maxCombo) S.maxCombo = S.combo;
+    p.kills++;
+    p.totalKills++;
+    c.combo++;
+    if (c.combo > c.maxCombo) c.maxCombo = c.combo;
 
-    S.hp = Math.min(S.hp + S.maxHp * 0.5, S.maxHp);
-    EventBus.emit('log:add', { msg: `[Heal] HP восстановлено до ${Math.floor(S.hp)}`, cls: 'log-heal' });
+    pl.hp = Math.min(pl.hp + pl.maxHp * 0.5, pl.maxHp);
+    EventBus.emit('log:add', { msg: `[Heal] HP восстановлено до ${Math.floor(pl.hp)}`, cls: 'log-heal' });
 
-    if (S.isBoss) {
-        S.totalBossDefeated++;
-        if (S.isSuperBoss) {
+    if (c.isBoss) {
+        c.totalBossDefeated++;
+        if (c.isSuperBoss) {
             EventBus.emit('log:add', {
                 msg: `[SB] СУПЕР-БОСС ${enemyStats.name} ПОВЕРЖЕН! +${goldReward}G +${expReward}XP`,
                 cls: 'log-super'
             });
-            S.superBossCount++;
+            p.superBossCount++;
             const bonusGold = goldReward * 2;
             const bonusExp = expReward * 2;
-            S.gold += bonusGold;
-            S.totalGold += bonusGold;
+            pl.gold += bonusGold;
+            pl.totalGold += bonusGold;
             addExp(bonusExp);
             EventBus.emit('log:add', { msg: `[Bonus] БОНУС ЗА СУПЕР-БОССА: +${bonusGold}G +${bonusExp}XP`, cls: 'log-gold' });
             EventBus.emit('superBoss:defeated');
@@ -53,10 +57,10 @@ export const handleEnemyKill = (enemyStats) => {
                 cls: 'log-boss'
             });
         }
-        S.isBoss = false;
-        S.isSuperBoss = false;
-        S.bossSkipped = false;
-        S.bossAttempts = 0;
+        c.isBoss = false;
+        c.isSuperBoss = false;
+        c.bossSkipped = false;
+        c.bossAttempts = 0;
     } else {
         EventBus.emit('log:add', {
             msg: `[Kill] ${enemyStats.name}! +${goldReward}G +${expReward}XP`,
@@ -66,8 +70,8 @@ export const handleEnemyKill = (enemyStats) => {
 
     levelUp();
     updateFloor();
-    if (S.floorKills === 0) {
-        S.bossSkipped = false;
+    if (p.floorKills === 0) {
+        c.bossSkipped = false;
     }
 
     spawnEnemy();

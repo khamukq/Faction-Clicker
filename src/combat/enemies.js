@@ -36,33 +36,38 @@ export const enemyScale = (base, lvl) => {
 };
 
 export const getEnemy = () => {
-    if (S.isBoss && S.isSuperBoss) {
-        const sbIndex = Math.min(Math.floor(S.floor / CONFIG.floors.superBossInterval) - 1, SUPER_BOSSES.length - 1);
+    const c = S.combat;
+    const p = S.progression;
+    if (c.isBoss && c.isSuperBoss) {
+        const sbIndex = Math.min(Math.floor(p.floor / CONFIG.floors.superBossInterval) - 1, SUPER_BOSSES.length - 1);
         return SUPER_BOSSES[Math.max(0, sbIndex)] || SUPER_BOSSES[0];
     }
-    if (S.isBoss) {
-        const bossIdx = Math.min((S.floor || 1) - 1, BOSSES.length - 1);
+    if (c.isBoss) {
+        const bossIdx = Math.min((p.floor || 1) - 1, BOSSES.length - 1);
         return BOSSES[Math.max(0, bossIdx)];
     }
-    const idx = S.enemyIndex % ENEMIES.length;
+    const idx = c.enemyIndex % ENEMIES.length;
     return ENEMIES[idx] || ENEMIES[0];
 };
 
 export const getEnemyStats = () => {
     const enemy = getEnemy();
-    let lvl = S.floor || 1;
-    if (S.isBoss && S.isSuperBoss) {
-        lvl = S.floor;
-    } else if (S.isBoss) {
-        lvl = S.floor || 1;
+    const c = S.combat;
+    const p = S.progression;
+    const pl = S.player;
+    let lvl = p.floor || 1;
+    if (c.isBoss && c.isSuperBoss) {
+        lvl = p.floor;
+    } else if (c.isBoss) {
+        lvl = p.floor || 1;
     }
 
-    if (S.isBoss && S.isSuperBoss) {
-        const sbIndex = Math.min(Math.floor(S.floor / CONFIG.floors.superBossInterval) - 1, SUPER_BOSSES.length - 1);
+    if (c.isBoss && c.isSuperBoss) {
+        const sbIndex = Math.min(Math.floor(p.floor / CONFIG.floors.superBossInterval) - 1, SUPER_BOSSES.length - 1);
         const sb = SUPER_BOSSES[Math.max(0, sbIndex)] || SUPER_BOSSES[0];
-        const floorMult = 1 + Math.max(0, S.floor - 500) * 0.005;
+        const floorMult = 1 + Math.max(0, p.floor - 500) * 0.005;
         return {
-            name: `${sb.name} (Супер-босс ${S.floor} этажа)`,
+            name: `${sb.name} (Супер-босс ${p.floor} этажа)`,
             emoji: sb.emoji,
             iconSvg: sb.iconSvg,
             hp: Math.floor(sb.hp * floorMult * CONFIG.floors.superBossMultiplier),
@@ -70,20 +75,20 @@ export const getEnemyStats = () => {
             armor: sb.armor || 20,
             gold: Math.floor(sb.gold * floorMult * CONFIG.floors.superBossGoldMult),
             exp: Math.floor(sb.exp * floorMult * CONFIG.floors.superBossExpMult),
-            level: S.floor,
+            level: p.floor,
             isBoss: true,
             isSuperBoss: true
         };
     }
 
-    if (S.isBoss) {
-        const bossIndex = Math.min((S.floor || 1) - 1, BOSSES.length - 1);
+    if (c.isBoss) {
+        const bossIndex = Math.min((p.floor || 1) - 1, BOSSES.length - 1);
         const boss = BOSSES[Math.max(0, bossIndex)];
-        const floorBonus = 1 + (S.floor - 1) * 0.05;
-        const playerLevelBonus = 1 + (S.level - 1) * 0.03;
+        const floorBonus = 1 + (p.floor - 1) * 0.05;
+        const playerLevelBonus = 1 + (pl.level - 1) * 0.03;
         const scale = floorBonus * playerLevelBonus;
         return {
-            name: `${boss.name} (этаж ${S.floor})`,
+            name: `${boss.name} (этаж ${p.floor})`,
             emoji: boss.emoji,
             iconSvg: boss.iconSvg,
             hp: Math.floor(boss.hp * scale * CONFIG.difficulty.bossHealthMult),
@@ -91,7 +96,7 @@ export const getEnemyStats = () => {
             armor: boss.armor || 1,
             gold: Math.floor(boss.gold * scale * CONFIG.difficulty.bossGoldMult),
             exp: Math.floor(boss.exp * scale * CONFIG.difficulty.bossExpMult),
-            level: S.floor || 1,
+            level: p.floor || 1,
             isBoss: true,
             isSuperBoss: false
         };

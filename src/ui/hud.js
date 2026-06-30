@@ -8,21 +8,24 @@ import { ICONS } from '../core/icons.js';
 import { getCurrentWeapon, getWeaponDamage, getTotalWeaponDamage, getSynergyBonus, getWeaponCount } from '../upgrades/weapons.js';
 
 export const updateHealthUI = () => {
-    const hpPct = Math.max(0, (S.hp / S.maxHp) * 100);
+    const pl = S.player;
+    const hpPct = Math.max(0, (pl.hp / pl.maxHp) * 100);
     const fillEl = $('playerHpFill');
     const textEl = $('playerHpText');
     const pctEl = $('playerHpPct');
 
     if (fillEl) fillEl.style.width = hpPct + '%';
-    if (textEl) textEl.textContent = `${Math.floor(S.hp)}/${Math.floor(S.maxHp)}`;
+    if (textEl) textEl.textContent = `${Math.floor(pl.hp)}/${Math.floor(pl.maxHp)}`;
     if (pctEl) pctEl.textContent = hpPct.toFixed(0) + '%';
 };
 
 export const updateFloorUI = () => {
-    const floor = S.floor || 1;
-    const floorKills = S.floorKills || 0;
+    const c = S.combat;
+    const p = S.progression;
+    const floor = p.floor || 1;
+    const floorKills = p.floorKills || 0;
     const enemiesPerFloor = CONFIG.floors.enemiesPerFloor || 10;
-    const displayKills = S.isBoss ? enemiesPerFloor : floorKills;
+    const displayKills = c.isBoss ? enemiesPerFloor : floorKills;
     const progress = Math.min(100, (displayKills / enemiesPerFloor) * 100);
 
     const floorDisplay = $('floorDisplay');
@@ -31,7 +34,7 @@ export const updateFloorUI = () => {
 
     if (floorDisplay) floorDisplay.textContent = floor;
     if (floorProgress) {
-        floorProgress.textContent = S.isBoss
+        floorProgress.textContent = c.isBoss
             ? `${enemiesPerFloor}/${enemiesPerFloor} (босс)`
             : `${floorKills}/${enemiesPerFloor}`;
     }
@@ -42,12 +45,14 @@ export const updateSuperBossIndicator = () => {
     const indicator = $('superBossIndicator');
     if (!indicator) return;
 
-    const floor = S.floor || 1;
+    const c = S.combat;
+    const p = S.progression;
+    const floor = p.floor || 1;
     const interval = CONFIG.floors.superBossInterval || 500;
     const isSuperBossFloor = floor % interval === 0 && floor >= interval;
     const superBossFloor = $('superBossFloor');
 
-    if (isSuperBossFloor && !S.isBoss && !S.isSuperBoss) {
+    if (isSuperBossFloor && !c.isBoss && !c.isSuperBoss) {
         indicator.style.display = 'block';
         if (superBossFloor) superBossFloor.textContent = floor;
     } else {
@@ -81,11 +86,11 @@ export const updateEnemyUI = (stats) => {
 
     if (damageEl) damageEl.textContent = stats.damage;
     if (armorEl) armorEl.textContent = stats.armor;
-    if (killsEl) killsEl.textContent = `Убито: ${S.totalKills}`;
+    if (killsEl) killsEl.textContent = `Убито: ${S.progression.totalKills}`;
 
-    const pct = Math.max(0, (S.enemyHp / S.enemyMaxHp) * 100);
+    const pct = Math.max(0, (S.combat.enemyHp / S.combat.enemyMaxHp) * 100);
     if (fillEl) fillEl.style.width = pct + '%';
-    if (textEl) textEl.textContent = `${Math.floor(S.enemyHp)}/${Math.floor(S.enemyMaxHp)}`;
+    if (textEl) textEl.textContent = `${Math.floor(S.combat.enemyHp)}/${Math.floor(S.combat.enemyMaxHp)}`;
 
     updateBossUI();
 };
@@ -94,15 +99,16 @@ export const updateBossUI = () => {
     const container = $('bossContainer');
     if (!container) return;
 
-    if (S.isBoss) {
+    if (S.combat.isBoss) {
         container.classList.add('active');
-        const label = S.isSuperBoss ? '[SB] СУПЕР-БОСС' : '[Boss] БОСС';
-        const attempts = S.bossAttempts > 0
-            ? ` · попыток ${S.bossAttempts}/${S.bossMaxAttempts}`
+        const c = S.combat;
+        const label = c.isSuperBoss ? '[SB] СУПЕР-БОСС' : '[Boss] БОСС';
+        const attempts = c.bossAttempts > 0
+            ? ` · попыток ${c.bossAttempts}/${c.bossMaxAttempts}`
             : '';
         container.innerHTML = `
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-                <span style="color:#f472b6;font-weight:700;">${label} этажа ${S.floor}${attempts}</span>
+                <span style="color:#f472b6;font-weight:700;">${label} этажа ${S.progression.floor}${attempts}</span>
                 <button type="button" id="skipBossBtn" style="background:#2a1f18;border:1px solid #f5c842;color:#f5c842;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:600;">
                     ${ICONS.skip} Пропустить
                 </button>
@@ -118,9 +124,9 @@ export const updateBossUI = () => {
 export const updateWeaponUI = () => {
     const container = $('weaponDisplay');
     if (!container) return;
-    if (!S.f) { container.style.display = 'none'; return; }
+    if (!S.faction.id) { container.style.display = 'none'; return; }
     const wp = getCurrentWeapon(S);
-    const lvl = (S.weapons[wp.id]?.level) || 0;
+    const lvl = (S.weapons.inventory[wp.id]?.level) || 0;
     const dmg = getWeaponDamage(S, wp.id);
     const iconEl = $('weaponIcon');
     const nameEl = $('weaponName');
@@ -149,30 +155,35 @@ export const updateUI = () => {
     const incomeEl = $('incomeDisplay');
     const comboEl = $('comboCount');
 
-    if (goldEl) goldEl.textContent = fmt(S.gold);
-    if (damageEl) damageEl.textContent = fmt(totalDamage);
-    if (levelEl) levelEl.textContent = S.level;
-    if (nicknameEl) nicknameEl.textContent = S.nickname || '-';
-    if (prestigeDisplayEl) prestigeDisplayEl.textContent = `P${S.prestigePoints}`;
-    if (prestigeMultEl) prestigeMultEl.textContent = `x${S.permanentMultiplier.toFixed(2)}`;
-    if (ascensionDisplayEl) ascensionDisplayEl.textContent = `A${S.ascension}`;
-    if (killsEl) killsEl.textContent = S.totalKills;
-    if (totalGoldEl) totalGoldEl.textContent = fmt(S.totalGold);
-    if (armyEl) armyEl.textContent = S.a || 0;
-    if (incomeEl) incomeEl.textContent = fmt(income) + '/сек';
-    if (comboEl) comboEl.textContent = S.combo;
+    const pl = S.player;
+    const m = S.meta;
+    const c = S.combat;
+    const p = S.progression;
 
-    const expPct = (S.exp / S.expToNext) * 100;
+    if (goldEl) goldEl.textContent = fmt(pl.gold);
+    if (damageEl) damageEl.textContent = fmt(totalDamage);
+    if (levelEl) levelEl.textContent = pl.level;
+    if (nicknameEl) nicknameEl.textContent = pl.nickname || '-';
+    if (prestigeDisplayEl) prestigeDisplayEl.textContent = `P${m.prestigePoints}`;
+    if (prestigeMultEl) prestigeMultEl.textContent = `x${m.permanentMultiplier.toFixed(2)}`;
+    if (ascensionDisplayEl) ascensionDisplayEl.textContent = `A${m.ascension}`;
+    if (killsEl) killsEl.textContent = p.totalKills;
+    if (totalGoldEl) totalGoldEl.textContent = fmt(pl.totalGold);
+    if (armyEl) armyEl.textContent = pl.a || 0;
+    if (incomeEl) incomeEl.textContent = fmt(income) + '/сек';
+    if (comboEl) comboEl.textContent = c.combo;
+
+    const expPct = (pl.exp / pl.expToNext) * 100;
     const expFill = $('expFill');
     const expText = $('expText');
     const levelDisplay = $('levelDisplay');
     const levelBonusDisplay = $('levelBonusDisplay');
 
     if (expFill) expFill.style.width = Math.min(expPct, 100) + '%';
-    if (expText) expText.textContent = `${fmt(S.exp)}/${fmt(S.expToNext)} XP`;
-    if (levelDisplay) levelDisplay.textContent = S.level;
+    if (expText) expText.textContent = `${fmt(pl.exp)}/${fmt(pl.expToNext)} XP`;
+    if (levelDisplay) levelDisplay.textContent = pl.level;
     if (levelBonusDisplay) {
-        const bonus = getLevelBonuses(S.level);
+        const bonus = getLevelBonuses(S.player.level);
         levelBonusDisplay.textContent = `+${bonus.damage} урона, +${bonus.hp} HP`;
     }
 

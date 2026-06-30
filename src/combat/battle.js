@@ -21,15 +21,15 @@ const playHitAnimation = () => {
 export const enemyAttack = () => {
     const enemyStats = getEnemyStats();
     let damage = enemyStats.damage || 3;
-    const defense = S.b.defense || 0;
+    const defense = S.faction.bonuses.defense || 0;
     damage = Math.max(1, damage - defense * 0.5);
-    S.hp -= Math.floor(damage);
+    S.player.hp -= Math.floor(damage);
     EventBus.emit('log:add', { msg: `[Dmg] Враг нанёс ${Math.floor(damage)} урона!`, cls: 'log-damage' });
     EventBus.emit('player:hpChanged');
 };
 
 export const attack = () => {
-    if (!S.f) {
+    if (!S.faction.id) {
         EventBus.emit('log:add', { msg: '[X] Сначала выбери фракцию!', cls: 'log-damage' });
         return false;
     }
@@ -41,7 +41,7 @@ export const attack = () => {
 
     playHitAnimation();
 
-    S.enemyHp -= actualDamage;
+    S.combat.enemyHp -= actualDamage;
     EventBus.emit('log:add', { msg: `[Hit] Удар на ${actualDamage} урона`, cls: 'log-damage' });
     EventBus.emit('enemy:hpChanged');
 
@@ -53,49 +53,50 @@ export const attack = () => {
         showFloatingText(x, y, `-${actualDamage}`, 'damage');
     }
 
-    if (S.enemyHp <= 0) {
+    if (S.combat.enemyHp <= 0) {
         handleEnemyKill(enemyStats);
     } else {
         enemyAttack();
 
-        if (S.hp <= 0) {
-            if (S.isBoss) {
-                S.bossAttempts++;
-                S.hp = S.maxHp;
+        if (S.player.hp <= 0) {
+            if (S.combat.isBoss) {
+                S.combat.bossAttempts++;
+                S.player.hp = S.player.maxHp;
                 EventBus.emit('log:add', {
-                    msg: `[Death] ВЫ УМЕРЛИ ОТ ${S.isSuperBoss ? 'СУПЕР-БОССА' : 'БОССА'}! Попытка ${S.bossAttempts}/${S.bossMaxAttempts}`,
+                    msg: `[Death] ВЫ УМЕРЛИ ОТ ${S.combat.isSuperBoss ? 'СУПЕР-БОССА' : 'БОССА'}! Попытка ${S.combat.bossAttempts}/${S.combat.bossMaxAttempts}`,
                     cls: 'log-boss'
                 });
-                if (S.bossAttempts >= S.bossMaxAttempts) {
-                    EventBus.emit('log:add', { msg: `[Surr] ${S.bossMaxAttempts} ПОРАЖЕНИЯ! Возврат к обычным врагам`, cls: 'log-boss' });
-                    S.isBoss = false;
-                    S.isSuperBoss = false;
-                    S.bossSkipped = true;
-                    S.bossAttempts = 0;
-                    S.enemyIndex = S.floorKills % ENEMIES.length;
+                if (S.combat.bossAttempts >= S.combat.bossMaxAttempts) {
+                    EventBus.emit('log:add', { msg: `[Surr] ${S.combat.bossMaxAttempts} ПОРАЖЕНИЯ! Возврат к обычным врагам`, cls: 'log-boss' });
+                    S.combat.isBoss = false;
+                    S.combat.isSuperBoss = false;
+                    S.combat.bossSkipped = true;
+                    S.combat.bossAttempts = 0;
+                    S.combat.enemyIndex = S.progression.floorKills % ENEMIES.length;
                     spawnEnemy();
                     EventBus.emit('boss:reset');
                     saveGame();
                 } else {
-                    S.enemyHp = Math.min(S.enemyMaxHp, S.enemyHp + S.enemyMaxHp * 0.2);
+                    S.combat.enemyHp = Math.min(S.combat.enemyMaxHp, S.combat.enemyHp + S.combat.enemyMaxHp * 0.2);
                     EventBus.emit('enemy:hpChanged');
                     playHitAnimation();
                     EventBus.emit('boss:attemptsUpdated');
                 }
             } else {
-                S.hp = 0;
+                S.player.hp = 0;
                 EventBus.emit('log:add', { msg: '[Death] ВЫ УМЕРЛИ! Возрождение...', cls: 'log-boss' });
-                S.hp = S.maxHp;
+                S.player.hp = S.player.maxHp;
                 spawnEnemy();
             }
             return true;
         }
     }
 
-    if (S.b.healRegen > 0 && S.hp < S.maxHp) {
-        let heal = S.b.healRegen + (S.levelStats.healBonus || 0);
-        if (S.b.factionBonus?.alliance_bond?.active) heal *= S.b.factionBonus.alliance_bond.healMult;
-        S.hp = Math.min(S.maxHp, S.hp + heal);
+    const b = S.faction.bonuses;
+    if (b.healRegen > 0 && S.player.hp < S.player.maxHp) {
+        let heal = b.healRegen + (S.player.levelStats.healBonus || 0);
+        if (b.factionBonus?.alliance_bond?.active) heal *= b.factionBonus.alliance_bond.healMult;
+        S.player.hp = Math.min(S.player.maxHp, S.player.hp + heal);
         EventBus.emit('player:hpChanged');
     }
 
@@ -104,29 +105,29 @@ export const attack = () => {
 };
 
 export const skipBoss = () => {
-    if (!S.isBoss) {
+    if (!S.combat.isBoss) {
         EventBus.emit('log:add', { msg: '[X] Сейчас нет босса!', cls: 'log-damage' });
         return false;
     }
 
-    const label = S.isSuperBoss ? 'супер-босса' : 'босса';
+    const label = S.combat.isSuperBoss ? 'супер-босса' : 'босса';
     if (!confirm(`[Boss] Пропустить ${label}?\n\nЭтаж будет завершён без награды за босса.`)) {
         return false;
     }
 
-    S.isBoss = false;
-    S.isSuperBoss = false;
-    S.bossAttempts = 0;
-    S.bossSkipped = false;
+    S.combat.isBoss = false;
+    S.combat.isSuperBoss = false;
+    S.combat.bossAttempts = 0;
+    S.combat.bossSkipped = false;
 
     const enemiesPerFloor = CONFIG.floors.enemiesPerFloor || 10;
-    const targetKills = S.floor * enemiesPerFloor;
-    if (S.totalKills < targetKills) {
-        S.totalKills = targetKills;
+    const targetKills = S.progression.floor * enemiesPerFloor;
+    if (S.progression.totalKills < targetKills) {
+        S.progression.totalKills = targetKills;
     }
 
     updateFloor();
-    EventBus.emit('log:add', { msg: `[Skip] Босс пропущен. Добро пожаловать на этаж ${S.floor}!`, cls: 'log-boss' });
+    EventBus.emit('log:add', { msg: `[Skip] Босс пропущен. Добро пожаловать на этаж ${S.progression.floor}!`, cls: 'log-boss' });
     spawnEnemy();
     saveGame();
     EventBus.emit('boss:skipped');

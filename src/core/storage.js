@@ -1,49 +1,15 @@
-import { S, loadState } from './state.js';
+import { S, loadState, getStateSnapshot } from './state.js';
 import { CONFIG, defaultBonuses } from './config.js';
 import { EventBus } from './eventBus.js';
 import { fmt } from './utils.js';
 import { getCurrentUser } from '../firebase/auth.js';
 import { saveGameToFirebase as fbSave, loadGameFromFirebase as fbLoad } from '../firebase/db.js';
 
-const getSaveData = () => ({
-    version: CONFIG.VERSION,
-    savedUid: getCurrentUser()?.uid || null,
-    f: S.f, clan: S.clan, clanName: S.clanName,
-    gold: S.gold, maxHp: S.maxHp, hp: S.hp,
-    level: S.level, exp: S.exp, expToNext: S.expToNext,
-    totalExp: S.totalExp,
-    kills: S.kills, combo: S.combo, maxCombo: S.maxCombo,
-    totalKills: S.totalKills, totalDamage: S.totalDamage,
-    totalGold: S.totalGold,
-    rebirths: S.rebirths, rebirthMultiplier: S.rebirthMultiplier,
-    prestigePoints: S.prestigePoints, totalPrestigePoints: S.totalPrestigePoints,
-    permanentMultiplier: S.permanentMultiplier,
-    ascension: S.ascension, ascensionPoints: S.ascensionPoints,
-    nickname: S.nickname, crits: S.crits, hits: S.hits,
-    enemyIndex: S.enemyIndex, enemyHp: S.enemyHp,
-    enemyMaxHp: S.enemyMaxHp, isBoss: S.isBoss,
-    isSuperBoss: S.isSuperBoss,
-    bossCount: S.bossCount, bossSkipped: S.bossSkipped,
-    bossAttempts: S.bossAttempts,
-    a: S.a, u: S.u,
-    b: S.b, perks: S.perks,
-    achievements: S.achievements,
-    boostCooldown: S.boostCooldown,
-    activeSkills: S.activeSkills,
-    levelStats: S.levelStats,
-    levelMilestones: S.levelMilestones,
-    floor: S.floor,
-    floorKills: S.floorKills,
-    superBossCount: S.superBossCount,
-    autoClicker: {
-        enabled: S.autoClicker.enabled,
-        level: S.autoClicker.level,
-        interval: S.autoClicker.interval
-    },
-    weapon: S.weapon,
-    weapons: S.weapons,
-    lastSave: Date.now()
-});
+const getSaveData = () => {
+    const snap = getStateSnapshot();
+    snap.savedUid = getCurrentUser()?.uid || null;
+    return snap;
+};
 
 export const saveGame = () => {
     try {
@@ -84,42 +50,82 @@ export const loadGameFromFirebase = async () => {
 };
 
 // ... остальные функции migrateSave, loadGame, etc.
+const flatToDomainKeys = {
+    f: 'faction.id', b: 'faction.bonuses',
+    clan: 'faction.clan', clanName: 'faction.clanName',
+    perks: 'faction.perks', achievements: 'faction.achievements',
+    activeSkills: 'faction.activeSkills',
+    gold: 'player.gold', hp: 'player.hp', maxHp: 'player.maxHp',
+    level: 'player.level', exp: 'player.exp', expToNext: 'player.expToNext',
+    totalExp: 'player.totalExp',
+    kills: 'progression.kills', totalKills: 'progression.totalKills',
+    combo: 'combat.combo', maxCombo: 'combat.maxCombo',
+    totalDamage: 'player.totalDamage', totalGold: 'player.totalGold',
+    rebirths: 'player.rebirths', rebirthMultiplier: 'player.rebirthMultiplier',
+    prestigePoints: 'meta.prestigePoints', totalPrestigePoints: 'meta.totalPrestigePoints',
+    permanentMultiplier: 'meta.permanentMultiplier',
+    ascension: 'meta.ascension', ascensionPoints: 'meta.ascensionPoints',
+    nickname: 'player.nickname', crits: 'player.crits', hits: 'player.hits',
+    enemyIndex: 'combat.enemyIndex', enemyHp: 'combat.enemyHp',
+    enemyMaxHp: 'combat.enemyMaxHp', isBoss: 'combat.isBoss',
+    isSuperBoss: 'combat.isSuperBoss',
+    bossCount: 'combat.bossCount', bossSkipped: 'combat.bossSkipped',
+    bossAttempts: 'combat.bossAttempts', bossMaxAttempts: 'combat.bossMaxAttempts',
+    a: 'player.a', u: 'player.u',
+    boostCooldown: 'player.boostCooldown',
+    levelStats: 'player.levelStats', levelMilestones: 'player.levelMilestones',
+    floor: 'progression.floor', floorKills: 'progression.floorKills',
+    superBossCount: 'progression.superBossCount',
+    weapon: 'weapons.current', weapons: 'weapons.inventory'
+};
+
+function setNestedPath(obj, path, value) {
+    const parts = path.split('.');
+    let cur = obj;
+    for (let i = 0; i < parts.length - 1; i++) {
+        if (!cur[parts[i]]) cur[parts[i]] = {};
+        cur = cur[parts[i]];
+    }
+    cur[parts[parts.length - 1]] = value;
+}
+
 export const migrateSave = (data) => {
     if (!data.version || data.version < CONFIG.VERSION) {
-        if (!data.b) data.b = defaultBonuses();
-        const defaultB = defaultBonuses();
-        for (const key in defaultB) {
-            if (!(key in data.b)) data.b[key] = defaultB[key];
-        }
-        if (!data.perks) data.perks = [];
-        if (!data.ascension) data.ascension = 0;
-        if (!data.ascensionPoints) data.ascensionPoints = 0;
-        if (!data.achievements) data.achievements = [];
-        if (!data.boostCooldown) data.boostCooldown = null;
-        if (!data.activeSkills) data.activeSkills = {};
-        if (!data.levelStats) {
-            data.levelStats = { damageBonus: 0, hpBonus: 0, healBonus: 0, goldBonus: 0 };
-        }
-        if (!data.totalExp) data.totalExp = 0;
-        if (!data.levelMilestones) data.levelMilestones = [];
-        if (!data.bossSkipped) data.bossSkipped = false;
-        if (!data.bossAttempts) data.bossAttempts = 0;
-        if (!data.bossMaxAttempts) data.bossMaxAttempts = CONFIG.difficulty.bossMaxAttempts;
-        if (!data.floor) data.floor = 1;
-        if (!data.floorKills) data.floorKills = 0;
-        if (!data.superBossCount) data.superBossCount = 0;
-        if (!data.autoClicker) {
-            data.autoClicker = {
-                enabled: false,
-                level: 0,
-                interval: CONFIG.autoClicker.interval
+        // Переводим плоский формат в доменный
+        if (data.f !== undefined || data.weapon !== undefined) {
+            const domain = {
+                player: { levelStats: { damageBonus: 0, hpBonus: 0, healBonus: 0, goldBonus: 0 } },
+                combat: {},
+                progression: {},
+                meta: {},
+                faction: { bonuses: defaultBonuses(), perks: [], achievements: [], activeSkills: {}, clan: null, clanName: '' },
+                auto: { enabled: false, level: 0, interval: CONFIG.autoClicker.interval },
+                weapons: { current: 'weapon_001', inventory: {} }
             };
-        }
-        if (!data.isSuperBoss) data.isSuperBoss = false;
-        if (!data.weapon) data.weapon = 'weapon_001';
-        if (!data.weapons) {
-            data.weapons = {};
-            data.weapons.weapon_001 = { level: 1, unlocked: true };
+            for (const key of Object.keys(data)) {
+                const path = flatToDomainKeys[key];
+                if (path) setNestedPath(domain, path, data[key]);
+            }
+            if (!domain.weapons.inventory.weapon_001) {
+                domain.weapons.inventory.weapon_001 = { level: 1, unlocked: true };
+            }
+            data = domain;
+        } else {
+            // уже доменный — доводим до актуальной структуры
+            if (!data.faction) data.faction = { bonuses: defaultBonuses(), perks: [], achievements: [], activeSkills: {}, clan: null, clanName: '' };
+            if (!data.player) data.player = {};
+            if (!data.combat) data.combat = {};
+            if (!data.progression) data.progression = {};
+            if (!data.meta) data.meta = {};
+            if (!data.auto) data.auto = { enabled: false, level: 0, interval: CONFIG.autoClicker.interval };
+            if (!data.weapons) data.weapons = { current: 'weapon_001', inventory: {} };
+            const defaultB = defaultBonuses();
+            for (const key in defaultB) {
+                if (!(key in data.faction.bonuses)) data.faction.bonuses[key] = defaultB[key];
+            }
+            if (!data.weapons.inventory.weapon_001) {
+                data.weapons.inventory.weapon_001 = { level: 1, unlocked: true };
+            }
         }
         data.version = CONFIG.VERSION;
     }

@@ -2,34 +2,42 @@ import { S } from '../core/state.js';
 import { EventBus } from '../core/eventBus.js';
 
 export const resetGame = () => {
-    S.gold = 10;
-    S.maxHp = 100;
-    S.hp = 100;
-    S.level = 1;
-    S.exp = 0;
-    S.expToNext = 50;
-    S.totalExp = 0;
-    S.kills = 0;
-    S.combo = 0;
-    S.totalKills = 0;
-    S.a = 0;
-    S.u = {};
-    S.isBoss = false;
-    S.isSuperBoss = false;
-    S.bossCount = 0;
-    S.bossSkipped = false;
-    S.bossAttempts = 0;
-    S.activeSkills = {};
-    S.levelStats = { damageBonus: 0, hpBonus: 0, healBonus: 0, goldBonus: 0 };
-    S.floor = 1;
-    S.floorKills = 0;
-    S.superBossCount = 0;
-    if (S.autoClicker.timer) {
-        clearInterval(S.autoClicker.timer);
-        S.autoClicker.timer = null;
+    S.player.gold = 10;
+    S.player.maxHp = 100;
+    S.player.hp = 100;
+    S.player.level = 1;
+    S.player.exp = 0;
+    S.player.expToNext = 50;
+    S.player.totalExp = 0;
+    S.player.a = 0;
+    S.player.u = {};
+    S.player.levelStats = { damageBonus: 0, hpBonus: 0, healBonus: 0, goldBonus: 0 };
+
+    S.progression.kills = 0;
+    S.progression.totalKills = 0;
+    S.progression.floor = 1;
+    S.progression.floorKills = 0;
+    S.progression.superBossCount = 0;
+
+    S.combat.combo = 0;
+    S.combat.isBoss = false;
+    S.combat.isSuperBoss = false;
+    S.combat.bossCount = 0;
+    S.combat.bossSkipped = false;
+    S.combat.bossAttempts = 0;
+
+    S.faction.activeSkills = {};
+
+    if (S.auto.timer) {
+        clearInterval(S.auto.timer);
+        S.auto.timer = null;
     }
-    S.autoClicker.enabled = false;
-    S.weapon = 'weapon_001';
-    S.weapons = {};
+    S.auto.enabled = false;
+
+    S.weapons.current = 'weapon_001';
+    S.weapons.inventory = {
+        weapon_001: { level: 1, unlocked: true }
+    };
+
     EventBus.emit('gameReset');
 };

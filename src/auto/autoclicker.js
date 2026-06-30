@@ -5,24 +5,25 @@ import { attack } from '../combat/battle.js';
 import { renderAutoClickerUI } from '../ui/renderer.js';
 
 export const toggleAutoClicker = () => {
-    if (!S.f) {
+    const ac = S.auto;
+    if (!S.faction.id) {
         EventBus.emit('log:add', { msg: '[X] Сначала выбери фракцию!', cls: 'log-damage' });
         return;
     }
-    if (!S.autoClicker.enabled) {
-        if (S.gold < CONFIG.autoClicker.cost) {
+    if (!ac.enabled) {
+        if (S.player.gold < CONFIG.autoClicker.cost) {
             EventBus.emit('log:add', { msg: `[X] Нужно ${CONFIG.autoClicker.cost}G для активации!`, cls: 'log-damage' });
             return;
         }
-        S.gold -= CONFIG.autoClicker.cost;
-        S.autoClicker.enabled = true;
-        S.autoClicker.interval = Math.max(100, CONFIG.autoClicker.interval - (S.autoClicker.level * CONFIG.autoClicker.speedPerLevel));
-        if (S.autoClicker.timer) clearInterval(S.autoClicker.timer);
-        S.autoClicker.timer = setInterval(() => { if (S.f && S.hp > 0) attack(); }, S.autoClicker.interval);
-        EventBus.emit('log:add', { msg: `[AC] АВТОКЛИКЕР АКТИВИРОВАН! (${S.autoClicker.interval}мс)`, cls: 'log-gold' });
+        S.player.gold -= CONFIG.autoClicker.cost;
+        ac.enabled = true;
+        ac.interval = Math.max(100, CONFIG.autoClicker.interval - (ac.level * CONFIG.autoClicker.speedPerLevel));
+        if (ac.timer) clearInterval(ac.timer);
+        ac.timer = setInterval(() => { if (S.faction.id && S.player.hp > 0) attack(); }, ac.interval);
+        EventBus.emit('log:add', { msg: `[AC] АВТОКЛИКЕР АКТИВИРОВАН! (${ac.interval}мс)`, cls: 'log-gold' });
     } else {
-        if (S.autoClicker.timer) clearInterval(S.autoClicker.timer);
-        S.autoClicker.enabled = false;
+        if (ac.timer) clearInterval(ac.timer);
+        ac.enabled = false;
         EventBus.emit('log:add', { msg: '[AC] Автокликер отключён', cls: 'log-damage' });
     }
     EventBus.emit('autoclicker:toggled');
@@ -30,27 +31,28 @@ export const toggleAutoClicker = () => {
 };
 
 export const upgradeAutoClicker = () => {
-    if (!S.autoClicker.enabled) {
+    const ac = S.auto;
+    if (!ac.enabled) {
         EventBus.emit('log:add', { msg: '[X] Сначала активируй автокликер!', cls: 'log-damage' });
         return;
     }
-    if (S.autoClicker.level >= CONFIG.autoClicker.maxLevel) {
+    if (ac.level >= CONFIG.autoClicker.maxLevel) {
         EventBus.emit('log:add', { msg: '[Max] Автокликер уже на максимальном уровне!', cls: 'log-gold' });
         return;
     }
-    const cost = CONFIG.autoClicker.upgradeCost * (S.autoClicker.level + 1);
-    if (S.gold < cost) {
+    const cost = CONFIG.autoClicker.upgradeCost * (ac.level + 1);
+    if (S.player.gold < cost) {
         EventBus.emit('log:add', { msg: `[X] Нужно ${cost}G для улучшения!`, cls: 'log-damage' });
         return;
     }
-    S.gold -= cost;
-    S.autoClicker.level++;
-    S.autoClicker.interval = Math.max(100, CONFIG.autoClicker.interval - (S.autoClicker.level * CONFIG.autoClicker.speedPerLevel));
-    if (S.autoClicker.timer) {
-        clearInterval(S.autoClicker.timer);
-        S.autoClicker.timer = setInterval(() => { if (S.f && S.hp > 0) attack(); }, S.autoClicker.interval);
+    S.player.gold -= cost;
+    ac.level++;
+    ac.interval = Math.max(100, CONFIG.autoClicker.interval - (ac.level * CONFIG.autoClicker.speedPerLevel));
+    if (ac.timer) {
+        clearInterval(ac.timer);
+        ac.timer = setInterval(() => { if (S.faction.id && S.player.hp > 0) attack(); }, ac.interval);
     }
-    EventBus.emit('log:add', { msg: `[Up] Автокликер улучшен до ${S.autoClicker.level} уровня! (${S.autoClicker.interval}мс)`, cls: 'log-gold' });
+    EventBus.emit('log:add', { msg: `[Up] Автокликер улучшен до ${ac.level} уровня! (${ac.interval}мс)`, cls: 'log-gold' });
     EventBus.emit('autoclicker:upgraded');
     renderAutoClickerUI();
 };

@@ -266,7 +266,7 @@ function startGame() {
     renderAchievements();
     renderWeapons();
     saveGame();
-    addBattleLog(`[Start] Добро пожаловать, ${S.nickname}! Фракция: ${F[S.f]?.name}`, 'log-gold');
+    addBattleLog(`[Start] Добро пожаловать, ${S.player.nickname}! Фракция: ${F[S.faction.id]?.name}`, 'log-gold');
 }
 
 function showFactionSelect(nickname) {
@@ -275,38 +275,42 @@ function showFactionSelect(nickname) {
     document.querySelectorAll('.faction-select-card').forEach(card => {
         card.onclick = function() {
             const factionId = this.dataset.faction;
-            if (S.f) {
-                if (!confirm(`Вы уже играете за ${F[S.f]?.name}. Смена фракции сбросит весь прогресс (кроме престижа и перков). Продолжить?`)) return;
-                S.gold = 10;
-                S.maxHp = 100;
-                S.hp = 100;
-                S.level = 1;
-                S.exp = 0;
-                S.expToNext = 50;
-                S.totalExp = 0;
-                S.kills = 0;
-                S.combo = 0;
-                S.totalKills = 0;
-                S.a = 0;
-                S.u = {};
-                S.isBoss = false;
-                S.isSuperBoss = false;
-                S.bossCount = 0;
-                S.bossSkipped = false;
-                S.bossAttempts = 0;
-                S.activeSkills = {};
-                S.levelStats = { damageBonus: 0, hpBonus: 0, healBonus: 0, goldBonus: 0 };
-                S.floor = 1;
-                S.floorKills = 0;
-                S.superBossCount = 0;
-                S.enemyIndex = 0;
-                if (S.autoClicker.timer) {
-                    clearInterval(S.autoClicker.timer);
-                    S.autoClicker.timer = null;
+            if (S.faction.id) {
+                if (!confirm(`Вы уже играете за ${F[S.faction.id]?.name}. Смена фракции сбросит весь прогресс (кроме престижа и перков). Продолжить?`)) return;
+                const pl = S.player;
+                const c = S.combat;
+                const p = S.progression;
+                const fa = S.faction;
+                pl.gold = 10;
+                pl.maxHp = 100;
+                pl.hp = 100;
+                pl.level = 1;
+                pl.exp = 0;
+                pl.expToNext = 50;
+                pl.totalExp = 0;
+                pl.a = 0;
+                pl.u = {};
+                pl.levelStats = { damageBonus: 0, hpBonus: 0, healBonus: 0, goldBonus: 0 };
+                c.isBoss = false;
+                c.isSuperBoss = false;
+                c.bossCount = 0;
+                c.bossSkipped = false;
+                c.bossAttempts = 0;
+                c.enemyIndex = 0;
+                c.combo = 0;
+                p.kills = 0;
+                p.totalKills = 0;
+                p.floor = 1;
+                p.floorKills = 0;
+                p.superBossCount = 0;
+                fa.activeSkills = {};
+                if (S.auto.timer) {
+                    clearInterval(S.auto.timer);
+                    S.auto.timer = null;
                 }
-                S.autoClicker.enabled = false;
+                S.auto.enabled = false;
             }
-            S.f = factionId;
+            S.faction.id = factionId;
             startGame();
         };
         card.addEventListener('mouseenter', function() {
@@ -343,46 +347,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (user) {
                     await saveNicknameMapping(nickname, user.email, user.uid);
                 }
-                S.nickname = nickname;
+                S.player.nickname = nickname;
                 document.getElementById('nicknameScreen').style.display = 'none';
                 const display = document.getElementById('nicknameDisplay');
                 if (display) display.textContent = nickname;
                 showFactionSelect(nickname);
             } else {
                 const fbLoaded = await loadGameFromFirebase();
-                if (fbLoaded && S.f && S.nickname) {
+                if (fbLoaded && S.faction.id && S.player.nickname) {
                     document.getElementById('nicknameScreen').style.display = 'none';
                     enterGame();
                     renderFullUI();
                     addBattleLog('[Cloud] Загружено из облака!', 'log-gold');
-                } else if (fbLoaded && S.nickname && !S.f) {
+                } else if (fbLoaded && S.player.nickname && !S.faction.id) {
                     document.getElementById('nicknameScreen').style.display = 'none';
-                    showFactionSelect(S.nickname);
+                    showFactionSelect(S.player.nickname);
                 } else {
                     const localLoaded = loadGame();
-                    if (localLoaded && S.f && S.nickname) {
+                    if (localLoaded && S.faction.id && S.player.nickname) {
                         document.getElementById('nicknameScreen').style.display = 'none';
                         enterGame();
                         renderFullUI();
                         addBattleLog('[Cache] Загружено из кеша', 'log-gold');
-                    } else if (localLoaded && S.nickname && !S.f) {
+                    } else if (localLoaded && S.player.nickname && !S.faction.id) {
                         document.getElementById('nicknameScreen').style.display = 'none';
-                        showFactionSelect(S.nickname);
+                        showFactionSelect(S.player.nickname);
                     } else {
                         document.getElementById('nicknameScreen').style.display = 'flex';
                         setupNickname(() => {
                             document.getElementById('nicknameScreen').style.display = 'none';
-                            showFactionSelect(S.nickname);
+                            showFactionSelect(S.player.nickname);
                         });
                     }
                 }
             }
 
             // Для старых аккаунтов — создать маппинг ника, если его нет
-            if (user && S.nickname && !pendingNickname) {
-                const existing = await getEmailByNickname(S.nickname);
+            if (user && S.player.nickname && !pendingNickname) {
+                const existing = await getEmailByNickname(S.player.nickname);
                 if (!existing) {
-                    await saveNicknameMapping(S.nickname, user.email, user.uid);
+                    await saveNicknameMapping(S.player.nickname, user.email, user.uid);
                 }
             }
 
@@ -397,7 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
     EventBus.on('log:add', ({ msg, cls }) => addBattleLog(msg, cls));
 
     EventBus.on('state:changed', ({ key }) => {
-        if (['gold', 'totalGold', 'level', 'totalKills', 'combo', 'hp', 'maxHp', 'prestigePoints', 'ascension', 'isBoss'].includes(key)) {
+        const flatKey = key.includes('.') ? key.split('.').pop() : key;
+        if (['gold', 'totalGold', 'level', 'totalKills', 'combo', 'hp', 'maxHp', 'prestigePoints', 'ascension', 'isBoss'].includes(flatKey)) {
             updateUI();
         }
     });
@@ -465,19 +470,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     setInterval(() => {
-        if (!S.f) return;
+        if (!S.faction.id) return;
         const income = computeIncome();
-        S.gold += income;
+        S.player.gold += income;
     }, 1000);
 
     setInterval(() => {
-        if (S.combo > 0) {
-            S.combo = Math.max(0, S.combo - 1);
+        if (S.combat.combo > 0) {
+            S.combat.combo = Math.max(0, S.combat.combo - 1);
         }
     }, CONFIG.difficulty.comboDecaySeconds * 1000);
 
     setInterval(async () => {
-        if (S.f) {
+        if (S.faction.id) {
             saveGame();
             await saveGameToFirebase();
         }
