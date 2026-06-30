@@ -17,9 +17,9 @@ const computeRawDamage = () => {
     let bonusDamage = b.damage || 0;
     let factionMult = faction?.multiplier || 1;
 
-    let prestigeMult = 1 + Math.log10(1 + S.meta.prestigePoints * 0.2);
+    let prestigeMult = 1 + Math.pow(S.meta.prestigePoints, 0.3) * 0.05;
 
-    let ascensionMult = 1 + S.meta.ascension * 0.1;
+    let ascensionMult = 1 + Math.log10(1 + S.meta.ascension) * 0.1;
 
     let weaponDamage = getTotalWeaponDamage(S) * (1 + getSynergyBonus(S));
 
@@ -74,8 +74,8 @@ export const computeIncome = () => {
 
     let levelBonus = S.player.levelStats.goldBonus || 0;
     let income = (b.passive || 0) + (b.gold || 0) + levelBonus + (S.player.a || 0) * (b.armyPassive || 0);
-    income *= (1 + Math.log10(1 + lvl) * 0.15);
-    income *= (1 + Math.log10(1 + S.meta.prestigePoints) * 0.2);
+    income *= (1 + Math.pow(lvl, 0.3) * 0.02);
+    income *= (1 + Math.log10(1 + S.meta.prestigePoints) * 0.05);
     if (faction) income *= faction.multiplier;
     income *= (1 + S.meta.ascension * 0.1);
     if (b.boost) income *= b.boostMul || 2;

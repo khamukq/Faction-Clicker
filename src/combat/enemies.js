@@ -103,9 +103,9 @@ export const getEnemyStats = () => {
     }
 
     const scaledHp = enemyScale(enemy.hp, lvl);
-    const scaledDamage = Math.max(1, Math.floor(enemy.damage * (1 + (lvl - 1) * 0.04)));
-    // награда пропорциональна HP врага — как в Clicker Heroes
-    const scaledGold = Math.max(1, Math.floor(scaledHp * 0.1 * CONFIG.difficulty.enemyGoldMult));
+    const scaledDamage = Math.max(1, Math.floor(enemy.damage * Math.pow(1.12, lvl - 1)));
+    const scaledArmor = enemy.armor * (1 + (lvl - 1) * 0.02);
+    const scaledGold = Math.max(1, Math.floor(scaledHp * 0.15 * CONFIG.difficulty.enemyGoldMult));
     const scaledExp = Math.max(1, Math.floor(scaledHp * 0.02 * CONFIG.difficulty.enemyExpMult));
 
     return {
@@ -114,7 +114,7 @@ export const getEnemyStats = () => {
         iconSvg: enemy.iconSvg,
         hp: scaledHp,
         damage: scaledDamage,
-        armor: enemy.armor || 0,
+        armor: Math.floor(scaledArmor),
         gold: Math.max(1, scaledGold),
         exp: Math.max(1, scaledExp),
         level: lvl,

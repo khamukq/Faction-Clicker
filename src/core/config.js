@@ -2,7 +2,8 @@ export const CONFIG = {
 VERSION: 12,
 prestigeFormula: (totalGold) => {
     if (totalGold < 100000) return 0;
-    return Math.max(1, Math.floor(Math.log10(totalGold / 100000) * 50));
+    if (totalGold < 100000) return 0;
+    return Math.max(1, Math.floor(Math.log10(totalGold / 100000) * 10));
 },
 limits: {
 maxIncome: 200000,
@@ -27,18 +28,18 @@ prestigeGrowth: 1.1,
 enemyAttackInterval: 2000,
 bossSkipCost: 0,
 bossMaxAttempts: 5,
-bossHealthMult: 1.25,
-bossDamageMult: 0.85,
-bossGoldMult: 5,
-bossExpMult: 4
+bossHealthMult: 1.5,
+bossDamageMult: 1.0,
+bossGoldMult: 20,
+bossExpMult: 10
 },
 autoClicker: {
 enabled: false,
 interval: 1000,
-cost: 100,
-upgradeCost: 150,
-maxLevel: 10,
-speedPerLevel: 50
+cost: 5000,
+upgradeCost: 10000,
+maxLevel: 5,
+speedPerLevel: 100
 },
 levelSystem: {
 expFormula: (level) => Math.floor(50 * Math.pow(1.25, level - 1)),
