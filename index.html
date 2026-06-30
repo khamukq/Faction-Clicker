@@ -3,19 +3,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Faction Clicker</title>
     <link rel="stylesheet" href="/style.css">
+    <style>
+        #enemy svg { width:64px; height:64px; }
+        .icon-replace svg { vertical-align:middle; }
+        .icon-replace { display:inline-flex; align-items:center; gap:4px; }
+    </style>
 </head>
 <body>
 <!-- ЭКРАН АВТОРИЗАЦИИ -->
 <div id="authScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1002;display:flex;align-items:center;justify-content:center;">
     <div id="authCard" style="background:#1a1410;border:2px solid #f5c842;border-radius:20px;padding:40px;max-width:400px;width:90%;text-align:center;">
-        <div style="font-size:64px;">[S]</div>
+        <div style="font-size:64px;"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round"><path d="M16 4l4 4-4 4M8 20l-4-4 4-4M16 20l4-4-4-4M8 4L4 8l4 4"/></svg></div>
         <h2 style="color:#f5c842;margin:10px 0;">FACTION CLICKER</h2>
         <p style="color:#8a7a6a;font-size:14px;margin-bottom:15px;">Войди или создай аккаунт</p>
 
         <!-- Вкладки Вход / Регистрация -->
         <div class="auth-tabs" style="display:flex;gap:0;margin-bottom:15px;border-radius:8px;overflow:hidden;border:1px solid #3d2b1f;">
-            <button id="authTabLogin" class="auth-tab active" style="flex:1;padding:10px;background:#2a1f18;border:none;color:#f5c842;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;">[Key] ВОЙТИ</button>
-            <button id="authTabRegister" class="auth-tab" style="flex:1;padding:10px;background:transparent;border:none;color:#8a7a6a;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;">[Pen] РЕГИСТРАЦИЯ</button>
+            <button id="authTabLogin" class="auth-tab active" style="flex:1;padding:10px;background:#2a1f18;border:none;color:#f5c842;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px;"><circle cx="8" cy="16" r="4"/><path d="M11 13l8-8M15 9l3-3M13 11l2-2"/></svg> ВОЙТИ</button>
+            <button id="authTabRegister" class="auth-tab" style="flex:1;padding:10px;background:transparent;border:none;color:#8a7a6a;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8a7a6a" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px;"><path d="M17 3a2 2 0 012.83 2.83L8 17.5 3 19l1.5-5L17 3z"/><path d="M14 6l4 4"/></svg> РЕГИСТРАЦИЯ</button>
         </div>
 
         <!-- ===== ВКЛАДКА ВХОД ===== -->
@@ -29,10 +34,10 @@
             <input type="text" id="authNickname" placeholder="Никнейм..." style="width:100%;padding:12px;border-radius:8px;border:2px solid #3d2b1f;background:#0f0a08;color:#d4c5a0;font-size:16px;margin:6px 0;box-sizing:border-box;display:none;">
             <div class="password-wrapper" style="position:relative;margin:6px 0;">
                 <input type="password" id="authPassword" placeholder="Пароль..." style="width:100%;padding:12px;border-radius:8px;border:2px solid #3d2b1f;background:#0f0a08;color:#d4c5a0;font-size:16px;padding-right:40px;box-sizing:border-box;">
-                <span class="toggle-password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#8a7a6a;font-size:18px;user-select:none;">[O]</span>
+                <span class="toggle-password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#8a7a6a;font-size:18px;user-select:none;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#8a7a6a" stroke-width="2" stroke-linecap="round"><path d="M12 4C5 4 2 12 2 12s3 8 10 8 10-8 10-8-3-8-10-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
             </div>
             <div id="authLoginError" style="color:#ff6b6b;font-size:14px;display:none;margin:5px 0;"></div>
-            <button id="authLoginBtn" style="width:100%;padding:12px;background:#6b3a4a;border:2px solid #f5c842;color:#f5c842;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;">[Key] ВОЙТИ</button>
+            <button id="authLoginBtn" style="width:100%;padding:12px;background:#6b3a4a;border:2px solid #f5c842;color:#f5c842;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px;"><circle cx="8" cy="16" r="4"/><path d="M11 13l8-8M15 9l3-3M13 11l2-2"/></svg> ВОЙТИ</button>
         </div>
 
         <!-- ===== ВКЛАДКА РЕГИСТРАЦИЯ ===== -->
@@ -41,10 +46,10 @@
             <input type="text" id="regNickname" placeholder="Никнейм (2-20 символов, буквы/цифры/_)..." style="width:100%;padding:12px;border-radius:8px;border:2px solid #3d2b1f;background:#0f0a08;color:#d4c5a0;font-size:16px;margin:6px 0;box-sizing:border-box;">
             <div class="password-wrapper" style="position:relative;margin:6px 0;">
                 <input type="password" id="regPassword" placeholder="Пароль (мин. 6 символов)..." style="width:100%;padding:12px;border-radius:8px;border:2px solid #3d2b1f;background:#0f0a08;color:#d4c5a0;font-size:16px;padding-right:40px;box-sizing:border-box;">
-                <span class="toggle-password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#8a7a6a;font-size:18px;user-select:none;">[O]</span>
+                <span class="toggle-password" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#8a7a6a;font-size:18px;user-select:none;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#8a7a6a" stroke-width="2" stroke-linecap="round"><path d="M12 4C5 4 2 12 2 12s3 8 10 8 10-8 10-8-3-8-10-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
             </div>
             <div id="authRegisterError" style="color:#ff6b6b;font-size:14px;display:none;margin:5px 0;"></div>
-            <button id="authRegisterBtn" style="width:100%;padding:12px;background:#2a4a3a;border:2px solid #34d399;color:#34d399;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;">[Pen] ЗАРЕГИСТРИРОВАТЬСЯ</button>
+            <button id="authRegisterBtn" style="width:100%;padding:12px;background:#2a4a3a;border:2px solid #34d399;color:#34d399;border-radius:8px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:4px;"><path d="M17 3a2 2 0 012.83 2.83L8 17.5 3 19l1.5-5L17 3z"/><path d="M14 6l4 4"/></svg> ЗАРЕГИСТРИРОВАТЬСЯ</button>
         </div>
 
         <div id="authSpinner" style="display:none;margin:10px 0;color:#8a7a6a;">Загрузка...</div>
@@ -53,17 +58,17 @@
 <!-- НИКНЕЙМ ЭКРАН -->
 <div id="nicknameScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;display:flex;align-items:center;justify-content:center;">
     <div style="background:#1a1410;border:2px solid #f5c842;border-radius:20px;padding:40px;max-width:400px;width:90%;text-align:center;">
-        <div style="font-size:64px;">[P]</div>
+        <div style="font-size:64px;"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="5"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg></div>
         <h2 style="color:#f5c842;margin:10px 0;">Введите никнейм</h2>
         <p style="color:#8a7a6a;font-size:14px;">Только буквы, цифры и _ (2-20 символов)</p>
         <input type="text" id="nicknameInput" placeholder="Ваш никнейм..." style="width:100%;padding:12px;border-radius:8px;border:2px solid #3d2b1f;background:#0f0a08;color:#d4c5a0;font-size:16px;margin:10px 0;">
         <div id="nicknameError" style="color:#ff6b6b;font-size:14px;display:none;margin:5px 0;"></div>
-        <button id="setNicknameBtn" style="width:100%;padding:12px;background:#6b3a4a;border:2px solid #f5c842;color:#f5c842;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;">[OK] ПОДТВЕРДИТЬ</button>
+        <button id="setNicknameBtn" style="width:100%;padding:12px;background:#6b3a4a;border:2px solid #f5c842;color:#f5c842;border-radius:8px;font-size:18px;font-weight:700;cursor:pointer;"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#f5c842" stroke-width="3" stroke-linecap="round" style="vertical-align:middle;margin-right:4px;"><path d="M5 13l4 4L19 7"/></svg> ПОДТВЕРДИТЬ</button>
     </div>
 </div><!-- ВЫБОР ФРАКЦИИ --><div id="factionSelectScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:1001;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px;">
     <div style="background:#1a1410;border:2px solid #f5c842;border-radius:20px;padding:30px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;">
         <div style="text-align:center;margin-bottom:20px;">
-            <div style="font-size:48px;">[S]</div>
+            <div style="font-size:48px;"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#f5c842" stroke-width="2" stroke-linecap="round"><path d="M16 4l4 4-4 4M8 20l-4-4 4-4M16 20l4-4-4-4M8 4L4 8l4 4"/></svg></div>
             <h2 style="color:#f5c842;margin:5px 0;">Добро пожаловать, <span id="welcomeNickname">Воин</span>!</h2>
             <p style="color:#8a7a6a;font-size:14px;max-width:600px;margin:0 auto;">
                 Мир расколот на три фракции. Каждая предлагает свой путь к могуществу. 
@@ -74,42 +79,42 @@
         <div id="factionChoiceGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:15px;">
             <!-- Империя -->
             <div class="faction-select-card" data-faction="imp" style="background:#0f0a08;border:2px solid #3d2b1f;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s ease;">
-                <div style="font-size:64px;">[C]</div>
+                <div style="font-size:64px;"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#c89b3c" stroke-width="2" stroke-linecap="round"><path d="M4 21V9l4-3v15M10 21V6l2-2 2 2v15M16 21V6l4 3v12M4 12h4M10 12h4M16 12h4M4 15h4M10 15h4M16 15h4M4 18h4M10 18h4M16 18h4M4 21h16"/></svg></div>
                 <h3 style="color:#c89b3c;margin:8px 0;">Империя</h3>
                 <p style="color:#8a7a6a;font-size:13px;">Тактический. Власть через силу.</p>
                 <div style="color:#a08060;font-size:12px;margin:8px 0;">
                     <strong>Пассивы:</strong> Урон +10% за 5 уровней, доход +3% за 1000 золота
                 </div>
                 <div style="color:#a08060;font-size:12px;">
-                    <strong>Активная:</strong> [B] Имперский приказ — +50% урона на 10 сек
+                    <strong>Активная:</strong> <svg viewBox="0 0 24 24" width="14" height="14" fill="#f5c842" stroke="#f5c842" stroke-width="1" style="vertical-align:middle;"><path d="M13 2L4 14h7l-1 8 10-12h-7z"/></svg> Имперский приказ — +50% урона на 10 сек
                 </div>
-                <div style="margin-top:10px;color:#34d399;font-size:13px;">⚡ Множитель: x1.0</div>
+                <div style="margin-top:10px;color:#34d399;font-size:13px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="#34d399" stroke="#34d399" stroke-width="1" style="vertical-align:middle;"><path d="M13 2L4 14h7l-1 8 10-12h-7z"/></svg> Множитель: x1.0</div>
             </div>
             <!-- Синдикат -->
             <div class="faction-select-card" data-faction="syn" style="background:#0f0a08;border:2px solid #3d2b1f;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s ease;">
-                <div style="font-size:64px;">🥷</div>
+                <div style="font-size:64px;"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#6b4c9a" stroke-width="2"><path d="M12 2l2 8 8 2-8 2-2 8-2-8-8-2 8-2z" fill="#6b4c9a"/><circle cx="12" cy="12" r="2" fill="#e0e0e0"/></svg></div>
                 <h3 style="color:#6b4c9a;margin:8px 0;">Синдикат</h3>
                 <p style="color:#8a7a6a;font-size:13px;">Агрессивный. Сила в тени.</p>
                 <div style="color:#a08060;font-size:12px;margin:8px 0;">
                     <strong>Пассивы:</strong> Шанс крита +0.5% за уровень, +2 урона за убийство (до 200)
                 </div>
                 <div style="color:#a08060;font-size:12px;">
-                    <strong>Активная:</strong> 🔮 Тёмный ритуал — x3 крит урон на 20 сек
+                    <strong>Активная:</strong> <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#bb77dd" stroke-width="2" style="vertical-align:middle;"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12"/></svg> Тёмный ритуал — x3 крит урон на 20 сек
                 </div>
-                <div style="margin-top:10px;color:#34d399;font-size:13px;">⚡ Множитель: x1.0</div>
+                <div style="margin-top:10px;color:#34d399;font-size:13px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="#34d399" stroke="#34d399" stroke-width="1" style="vertical-align:middle;"><path d="M13 2L4 14h7l-1 8 10-12h-7z"/></svg> Множитель: x1.0</div>
             </div>
             <!-- Альянс -->
             <div class="faction-select-card" data-faction="all" style="background:#0f0a08;border:2px solid #3d2b1f;border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s ease;">
-                <div style="font-size:64px;">🛡️</div>
+                <div style="font-size:64px;"><svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#3c9b6b" stroke-width="2" stroke-linecap="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V6z"/></svg></div>
                 <h3 style="color:#3c9b6b;margin:8px 0;">Альянс</h3>
                 <p style="color:#8a7a6a;font-size:13px;">Стабильный. Сила в единстве.</p>
                 <div style="color:#a08060;font-size:12px;margin:8px 0;">
                     <strong>Пассивы:</strong> +5 HP за наёмника, +1% дохода за наёмника
                 </div>
                 <div style="color:#a08060;font-size:12px;">
-                    <strong>Активная:</strong> 💚 Связь Альянса — x5 регенерация на 15 сек
+                    <strong>Активная:</strong> <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#44cc66" stroke-width="2" style="vertical-align:middle;"><path d="M12 21c-6-4-10-8-10-12a5 5 0 0110-2 5 5 0 0110 2c0 4-4 8-10 12"/><path d="M9 12h6M12 9v6"/></svg> Связь Альянса — x5 регенерация на 15 сек
                 </div>
-                <div style="margin-top:10px;color:#34d399;font-size:13px;">⚡ Множитель: x1.0</div>
+                <div style="margin-top:10px;color:#34d399;font-size:13px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="#34d399" stroke="#34d399" stroke-width="1" style="vertical-align:middle;"><path d="M13 2L4 14h7l-1 8 10-12h-7z"/></svg> Множитель: x1.0</div>
             </div>
         </div>
         <div id="factionSelectError" style="color:#ff6b6b;font-size:14px;text-align:center;margin-top:10px;display:none;">Выберите фракцию!</div>

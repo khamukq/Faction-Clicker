@@ -53,6 +53,8 @@ export const ICONS = {
     ding: svg('<path d="M12 2a8 8 0 00-8 8v4l-2 3h20l-2-3v-4a8 8 0 00-8-8z"/><path d="M9 19a3 3 0 006 0"/>', '#f5c842'),
     prestige: svg('<path d="M12 2l2 6 6 1-4 4 1 6-5-3-5 3 1-6-4-4 6-1z"/>', '#f5c842'),
     ascension: svg('<path d="M12 2l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/><circle cx="6" cy="6" r="1" fill="#f5c842"/><circle cx="18" cy="18" r="1" fill="#f5c842"/><circle cx="6" cy="18" r="1" fill="#f5c842"/><circle cx="18" cy="6" r="1" fill="#f5c842"/><path d="M4 14l3-3M17 4l3 3"/>', '#f5c842'),
+    key: svg('<circle cx="8" cy="16" r="4"/><path d="M11 13l8-8M15 9l3-3M13 11l2-2"/>', '#f5c842'),
+    pen: svg('<path d="M17 3a2 2 0 012.83 2.83L8 17.5 3 19l1.5-5L17 3z"/><path d="M14 6l4 4"/>', '#e0e0e0'),
     skills: svg('<path d="M12 2L4 8v8l8 6 8-6V8z"/><path d="M12 12l2-4M12 12l-2-4M12 12v6"/>', '#f5c842'),
     perk: svg('<path d="M12 2a4 4 0 00-4 4v2H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-2V6a4 4 0 00-4-4z"/><path d="M9 14l2 2 4-4"/>', '#e0e0e0'),
     boss: svg('<circle cx="12" cy="10" r="9"/><path d="M7 8l-2-3M17 8l2-3"/><circle cx="8" cy="9" r="2" fill="#ff4444"/><circle cx="16" cy="9" r="2" fill="#ff4444"/><path d="M9 15c1.5 1.5 4.5 1.5 6 0"/>', '#ff4444'),
