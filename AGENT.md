@@ -1,0 +1,1 @@
+use svg insteag emojis
