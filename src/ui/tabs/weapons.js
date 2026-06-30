@@ -9,12 +9,14 @@ import {
     buyWeapon, upgradeWeapon, getCurrentWeapon, getWeaponUnlocked
 } from '../../upgrades/weapons.js';
 import { ICONS } from '../../core/icons.js';
+import { ERA_NAMES } from '../../upgrades/weapons.js';
 
-const COLORS = ['#8B6914','#808080','#B87333','#CD7F32','#A19D94','#71797E','#4A90D9','#E0115F','#FFD700','#9B30FF','#FF4500','#00CED1','#FFD700','#DC143C','#191970','#E6E6FA','#DDA0DD','#4169E1','#FFD700','#FFFFFF'];
+const COLORS = ['#8B6914','#A19D94','#9B30FF','#FFD700','#FFFFFF'];
+const ERA_COUNT = ERA_NAMES.length;
 
 let expandedEras = new Set();
 
-const getEraForWeapon = (tier) => Math.floor((tier - 1) / 10);
+const getEraForWeapon = (tier) => Math.floor((tier - 1) / 40);
 const getEraWeapons = (eraIdx) => WEAPONS.filter(w => getEraForWeapon(w.tier) === eraIdx);
 const isEraFullyUnlocked = (eraIdx) => getEraWeapons(eraIdx).every(w => getWeaponUnlocked(S, w.id));
 
@@ -105,14 +107,14 @@ const renderEraRoadmap = () => {
     return `
         <div style="margin-bottom:8px;padding:6px 8px;background:#0a0806;border-radius:6px;border:1px solid #1a1410;">
             <div style="display:flex;gap:2px;flex-wrap:wrap;justify-content:center;">
-                ${COLORS.map((c, i) => {
+                ${Array.from({length: ERA_COUNT}, (_, i) => {
                     const hasAny = getEraWeapons(i).some(w => getWeaponUnlocked(S, w.id));
                     const isFull = isEraFullyUnlocked(i);
                     let bg = '#1a1410', bd = '#1a1410';
                     if (i === currentEra) { bg = '#2a1f08'; bd = '#f5c842'; }
                     else if (isFull) { bg = '#0a1a10'; bd = '#34d399'; }
                     else if (hasAny) { bg = '#1a1808'; bd = '#fbbf24'; }
-                    return `<div class="era-dot" data-era="${i}" style="width:18px;height:18px;border-radius:4px;background:${bg};border:1px solid ${bd};display:flex;align-items:center;justify-content:center;font-size:7px;color:#6a5a4a;cursor:pointer;" title="${COLORS[i]}">${i+1}</div>`;
+                    return `<div class="era-dot" data-era="${i}" style="width:18px;height:18px;border-radius:4px;background:${bg};border:1px solid ${bd};display:flex;align-items:center;justify-content:center;font-size:7px;color:#6a5a4a;cursor:pointer;" title="${ERA_NAMES[i]}">${i+1}</div>`;
                 }).join('')}
             </div>
         </div>`;
@@ -193,7 +195,7 @@ export const renderWeapons = () => {
             <span style="color:#6a5a4a;font-size:11px;">${weaponCount}/${WEAPONS.length}</span>
         </div>`;
 
-    for (let i = 0; i < 20; i++) html += renderEraBlock(i);
+    for (let i = 0; i < ERA_COUNT; i++) html += renderEraBlock(i);
 
     c.innerHTML = html;
 

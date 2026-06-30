@@ -201,7 +201,7 @@ export const WEAPONS = [
     { id: 'weapon_200', name: 'Клинок Всего', icon: '⚔️', tier: 200, baseDamage: 100000000, damagePerLevel: 20000000, baseCost: 500000000, costGrowth: 2.15, unlockCost: 10000000000, description: 'ФИНАЛЬНОЕ ОРУЖИЕ. ВСЁ. АБСОЛЮТ. ВЕЧНОСТЬ.', maxLevel: 100 }
 ];
 
-const ERA_NAMES = [
+export const ERA_NAMES = [
     'Деревянное', 'Стальное', 'Магическое', 'Божественное', 'Абсолютное'
 ];
 
@@ -222,8 +222,8 @@ for (const wp of WEAPONS) {
     wp.maxLevel = 100;
 }
 
-export const getWeaponEra = (wp) => ERA_NAMES[Math.floor((wp.tier - 1) / 10)] || '';
-export const getWeaponEraIndex = (wp) => Math.floor((wp.tier - 1) / 10);
+export const getWeaponEra = (wp) => ERA_NAMES[Math.floor((wp.tier - 1) / 40)] || '';
+export const getWeaponEraIndex = (wp) => Math.floor((wp.tier - 1) / 40);
 
 export const getWeaponState = (state, weaponId) => {
     return state.weapons[weaponId] || { level: 0, unlocked: false };
