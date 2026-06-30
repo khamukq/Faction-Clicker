@@ -29,5 +29,7 @@ export const resetGame = () => {
         S.autoClicker.timer = null;
     }
     S.autoClicker.enabled = false;
+    S.weapon = 'weapon_001';
+    S.weapons = {};
     EventBus.emit('gameReset');
 };
