@@ -6,7 +6,8 @@ import {
     WEAPONS, getWeaponDamage, getTotalWeaponDamage,
     getWeaponCount, getSynergyBonus, getWeaponLevel,
     getWeaponUpgradeCost, getWeaponUnlockCost, getMaxLevelForWeapon,
-    buyWeapon, upgradeWeapon, getCurrentWeapon, getWeaponUnlocked
+    buyWeapon, upgradeWeapon, upgradeWeaponN, upgradeWeaponMax,
+    getCurrentWeapon, getWeaponUnlocked
 } from '../../upgrades/weapons.js';
 import { ICONS } from '../../core/icons.js';
 import { ERA_NAMES } from '../../upgrades/weapons.js';
@@ -58,9 +59,15 @@ const renderWeaponCard = (wp) => {
                         <div style="width:40px;height:4px;background:#1a1410;border-radius:2px;overflow:hidden;">
                             <div style="height:100%;width:${(level/maxLvl*100).toFixed(0)}%;background:${borderColor};border-radius:2px;"></div>
                         </div>
-                        <button class="weapon-upgrade-btn" data-id="${wp.id}" style="padding:3px 8px;background:#0a1410;border:1px solid ${canAffordUpgrade && !atMaxLevel ? '#34d399' : '#1a2a1a'};color:${canAffordUpgrade && !atMaxLevel ? '#34d399' : '#3a4a3a'};border-radius:4px;cursor:${canAffordUpgrade && !atMaxLevel ? 'pointer' : 'not-allowed'};font-size:10px;font-weight:600;${!(canAffordUpgrade && !atMaxLevel) ? 'opacity:0.4;' : ''}" ${(!canAffordUpgrade || atMaxLevel) ? 'disabled' : ''}>
-                            ${atMaxLevel ? 'MAX' : `${fmt(upgradeCost)}G`}
-                        </button>
+                        <div style="display:flex;gap:3px;">
+                            ${atMaxLevel ? '' : `
+                                <button class="weapon-upgrade-btn" data-id="${wp.id}" data-n="1" style="padding:2px 6px;background:#0a1410;border:1px solid ${canAffordUpgrade ? '#34d399' : '#1a2a1a'};color:${canAffordUpgrade ? '#34d399' : '#3a4a3a'};border-radius:3px;cursor:${canAffordUpgrade ? 'pointer' : 'not-allowed'};font-size:9px;font-weight:600;${!canAffordUpgrade ? 'opacity:0.4;' : ''}" ${!canAffordUpgrade ? 'disabled' : ''}>×1</button>
+                                <button class="weapon-upgrade-btn" data-id="${wp.id}" data-n="5" style="padding:2px 6px;background:#0a1410;border:1px solid ${canAffordUpgrade ? '#34d399' : '#1a2a1a'};color:${canAffordUpgrade ? '#34d399' : '#3a4a3a'};border-radius:3px;cursor:${canAffordUpgrade ? 'pointer' : 'not-allowed'};font-size:9px;font-weight:600;${!canAffordUpgrade ? 'opacity:0.4;' : ''}" ${!canAffordUpgrade ? 'disabled' : ''}>×5</button>
+                                <button class="weapon-upgrade-btn" data-id="${wp.id}" data-n="10" style="padding:2px 6px;background:#0a1410;border:1px solid ${canAffordUpgrade ? '#34d399' : '#1a2a1a'};color:${canAffordUpgrade ? '#34d399' : '#3a4a3a'};border-radius:3px;cursor:${canAffordUpgrade ? 'pointer' : 'not-allowed'};font-size:9px;font-weight:600;${!canAffordUpgrade ? 'opacity:0.4;' : ''}" ${!canAffordUpgrade ? 'disabled' : ''}>×10</button>
+                                <button class="weapon-upgrade-btn" data-id="${wp.id}" data-n="max" style="padding:2px 6px;background:#0a1410;border:1px solid ${canAffordUpgrade ? '#fbbf24' : '#1a2a1a'};color:${canAffordUpgrade ? '#fbbf24' : '#3a4a3a'};border-radius:3px;cursor:${canAffordUpgrade ? 'pointer' : 'not-allowed'};font-size:9px;font-weight:600;${!canAffordUpgrade ? 'opacity:0.4;' : ''}" ${!canAffordUpgrade ? 'disabled' : ''}>MAX</button>
+                            `}
+                            ${atMaxLevel ? '<span style="color:#34d399;font-size:9px;font-weight:600;">MAX</span>' : ''}
+                        </div>
                         <button class="weapon-select-btn" data-id="${wp.id}" style="padding:2px 6px;background:transparent;border:1px solid ${isCurrent ? '#f5c842' : '#2a1f18'};color:${isCurrent ? '#f5c842' : '#6a5a4a'};border-radius:3px;cursor:pointer;font-size:9px;">${isCurrent ? '✓' : '🔀'}</button>
                     `}
                 </div>
@@ -213,8 +220,13 @@ export const renderWeapons = () => {
     document.querySelectorAll('.weapon-upgrade-btn').forEach(b => {
         b.onclick = () => {
             const id = b.dataset.id;
-            if (upgradeWeapon(S, id)) {
-                EventBus.emit('log:add', { msg: `[Up] Улучшено: ${WEAPONS.find(w => w.id === id).name} → ${S.weapons[id].level} ур.`, cls: 'log-gold' });
+            const n = b.dataset.n;
+            let upgraded = 0;
+            if (n === 'max') upgraded = upgradeWeaponMax(S, id);
+            else upgraded = upgradeWeaponN(S, id, parseInt(n));
+            if (upgraded > 0) {
+                const wp = WEAPONS.find(w => w.id === id);
+                EventBus.emit('log:add', { msg: `[Up] ${wp.name} ×${upgraded} → ${S.weapons[id].level} ур.`, cls: 'log-gold' });
                 saveGame();
                 renderWeapons();
             }

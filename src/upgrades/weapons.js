@@ -135,6 +135,35 @@ export const upgradeWeapon = (state, weaponId) => {
     return true;
 };
 
+export const upgradeWeaponN = (state, weaponId, n) => {
+    let upgraded = 0;
+    for (let i = 0; i < n; i++) {
+        const cost = getWeaponUpgradeCost(state, weaponId);
+        if (state.gold < cost) break;
+        const ws = getWeaponState(state, weaponId);
+        if (ws.level >= getMaxLevelForWeapon(state, weaponId)) break;
+        state.gold -= cost;
+        ws.level++;
+        upgraded++;
+    }
+    return upgraded;
+};
+
+export const upgradeWeaponMax = (state, weaponId) => {
+    let upgraded = 0;
+    const maxLvl = getMaxLevelForWeapon(state, weaponId);
+    while (true) {
+        const ws = getWeaponState(state, weaponId);
+        if (ws.level >= maxLvl) break;
+        const cost = getWeaponUpgradeCost(state, weaponId);
+        if (state.gold < cost) break;
+        state.gold -= cost;
+        ws.level++;
+        upgraded++;
+    }
+    return upgraded;
+};
+
 export const getCurrentWeapon = (state) => {
     const id = state.weapon || 'weapon_001';
     return WEAPONS.find(w => w.id === id) || WEAPONS[0];
