@@ -36,13 +36,16 @@ for (const wp of WEAPONS) {
     const posInEra = (t - 1) % 5;
     wp.eraIndex = eraIdx;
     wp.era = ERA_NAMES[eraIdx] || '';
-    const eraPow = Math.pow(100, eraIdx);          // ×100 урона между эпохами
-    wp.baseDamage = Math.floor(eraPow + eraPow * posInEra * 2);
+    const dmgPow = Math.pow(100, eraIdx);          // ×100 урона между эпохами
+    const costPow = Math.pow(10, eraIdx);           // ×10 стоимости апгрейда
+    const unlockPow = Math.pow(100, eraIdx);        // ×100 стоимости анлока
+    wp.baseDamage = Math.floor(dmgPow + dmgPow * posInEra * 2);
     wp.damagePerLevel = +(wp.baseDamage * 0.1).toFixed(1);
-    // апгрейд дёшевый, анлок дорогой — выгодно качать текущую эпоху
-    wp.baseCost = Math.floor(10 + t * 2);
-    wp.costGrowth = 1.05;
-    wp.unlockCost = t === 1 ? 0 : Math.floor(eraPow * 500 + eraPow * posInEra * 100);
+    // апгрейд растёт ×10/эпоха, анлок ×100/эпоха — полный апгрейд эпохи
+    // всегда дешевле, чем первый анлок следующей
+    wp.baseCost = Math.floor(costPow * 20 + costPow * posInEra * 5);
+    wp.costGrowth = 1.07;
+    wp.unlockCost = t === 1 ? 0 : Math.floor(unlockPow * 2000 + unlockPow * posInEra * 500);
     wp.maxLevel = 50;
 }
 
