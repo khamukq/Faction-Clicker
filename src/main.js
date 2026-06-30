@@ -376,6 +376,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // Для старых аккаунтов — создать маппинг ника, если его нет
+            if (user && S.nickname && !pendingNickname) {
+                const existing = await getEmailByNickname(S.nickname);
+                if (!existing) {
+                    await saveNicknameMapping(S.nickname, user.email, user.uid);
+                }
+            }
+
             if (authResolve) authResolve();
         } else {
             document.getElementById('authScreen').style.display = 'flex';
