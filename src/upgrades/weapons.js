@@ -36,13 +36,14 @@ for (const wp of WEAPONS) {
     const posInEra = (t - 1) % 5;
     wp.eraIndex = eraIdx;
     wp.era = ERA_NAMES[eraIdx] || '';
-    const dmgPow = Math.pow(6, eraIdx) * 2;
-    wp.baseDamage = Math.floor(dmgPow + dmgPow * posInEra * 2);
+    const eraPow = Math.pow(100, eraIdx);          // ×100 урона между эпохами
+    wp.baseDamage = Math.floor(eraPow + eraPow * posInEra * 2);
     wp.damagePerLevel = +(wp.baseDamage * 0.1).toFixed(1);
-    wp.baseCost = Math.floor(50 + Math.pow(t, 2.5));
+    // апгрейд дёшевый, анлок дорогой — выгодно качать текущую эпоху
+    wp.baseCost = Math.floor(10 + t * 2);
     wp.costGrowth = 1.05;
-    wp.unlockCost = t === 1 ? 0 : Math.floor(100 + Math.pow(t, 2.2));
-    wp.maxLevel = 100;
+    wp.unlockCost = t === 1 ? 0 : Math.floor(eraPow * 500 + eraPow * posInEra * 100);
+    wp.maxLevel = 50;
 }
 
 export const getWeaponEra = (wp) => ERA_NAMES[Math.floor((wp.tier - 1) / 5)] || '';
@@ -106,7 +107,7 @@ export const getWeaponUnlockCost = (weaponId) => {
 };
 
 export const getMaxLevelForWeapon = (state, weaponId) => {
-    return 100;
+    return 50;
 };
 
 export const buyWeapon = (state, weaponId) => {
