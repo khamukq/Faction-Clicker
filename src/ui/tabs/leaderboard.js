@@ -1,7 +1,7 @@
 import { S } from '../../core/state.js';
 import { $, fmt } from '../../core/utils.js';
 import { F } from '../../factions/index.js';
-import { getLeaderboard } from '../../features/leaderboard.js';
+import { getLeaderboard, syncLeaderboardFromFirebase } from '../../features/leaderboard.js';
 import { addBattleLog } from '../battleLog.js';
 
 export const showPlayerProfile = (nick) => {
@@ -36,10 +36,11 @@ export const showPlayerProfile = (nick) => {
     modal.style.display = 'flex';
 };
 
-export const renderLeaderboard = () => {
+export const renderLeaderboard = async () => {
     const container = $('leaderboardContainer');
     if (!container) return;
 
+    await syncLeaderboardFromFirebase();
     const entries = getLeaderboard();
 
     if (entries.length === 0) {
