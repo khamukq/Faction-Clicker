@@ -16,7 +16,7 @@ const ERA_COUNT = ERA_NAMES.length;
 
 let expandedEras = new Set();
 
-const getEraForWeapon = (tier) => Math.floor((tier - 1) / 40);
+const getEraForWeapon = (tier) => Math.floor((tier - 1) / 5);
 const getEraWeapons = (eraIdx) => WEAPONS.filter(w => getEraForWeapon(w.tier) === eraIdx);
 const isEraFullyUnlocked = (eraIdx) => getEraWeapons(eraIdx).every(w => getWeaponUnlocked(S, w.id));
 
